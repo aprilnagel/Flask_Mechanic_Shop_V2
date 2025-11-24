@@ -123,75 +123,121 @@ def remove_mechanic_from_service_ticket(service_ticket_id, mechanic_id):
 
 
 #_________________ADD PART TO SERVICE TICKET______________________
-@service_tickets_bp.route('/<int:service_ticket_id>/add_part', methods=['PUT'])
-def add_part_to_service_ticket(service_ticket_id):
-    service_ticket = db.session.get(Service_Tickets, service_ticket_id)
+
+#we will need to query the service ticket to see of the part already exists. If it does, we will just update the quantity and price. We will not create a duplicate entry in the service ticket parts association table. Then we will subtract the part quantity from the parts stock in the parts table and update the service ticket price accordingly.
+
+@service_tickets_bp.route('/add_part', methods=['PUT'])
+def add_part_to_service_ticket():
+    # Get service ticket
+    service_ticket = db.session.get(Service_Tickets, request.json.get('service_ticket_id'))
     if not service_ticket:
         return jsonify({"message": "Service Ticket not found"}), 404
-    
-    #enter part id and quantity in the request body
+
+    # Get part
     part = db.session.get(Parts, request.json.get('part_id'))
     if not part:
         return jsonify({"message": "Part not found"}), 404
+
+    # Validate quantity
     quantity = request.json.get('quantity', 1)
-    if quantity <= 0:
+    if quantity is None or quantity <= 0:
         return jsonify({"message": "Quantity must be greater than zero"}), 400
-    
-    #subtract the part quantity from the part stock in the parts table
     if part.stock < quantity:
         return jsonify({"message": "Insufficient stock for the requested part"}), 400
-    part.stock -= quantity
-    
-    #add parts and price to the service ticket
-    if service_ticket.parts:
-        service_ticket.parts += f", {part.part_name} (x{quantity})"
+
+    # Check if part already exists in the service ticket
+    service_ticket_part = db.session.query(Service_Ticket_Parts).filter_by(service_ticket_id=service_ticket.id, part_id=part.id).first()
+
+    if service_ticket_part:
+        # Update quantity
+        service_ticket_part.quantity += quantity
     else:
-        service_ticket.parts = f"{part.part_name} (x{quantity})"
-    
-    service_ticket.price = (service_ticket.price or 0) + (part.price * quantity)
-    
-       
-    #create a new service ticket parts association object
-    service_ticket_part = Service_Ticket_Parts(service_ticket_id=service_ticket.id, part_id=part.id, quantity=quantity)
-    db.session.add(service_ticket_part)
+        # Create new association
+        service_ticket_part = Service_Ticket_Parts(service_ticket_id=service_ticket.id, part_id=part.id, quantity=quantity)
+        db.session.add(service_ticket_part)
+
+    # Update stock
+    part.stock -= quantity
+
+    # Update price (initialize if None)
+    if service_ticket.price is None:
+        service_ticket.price = 0.0
+    service_ticket.price += (part.price * quantity)
+
+    # Regenerate the parts field from the association table
+    service_ticket.parts = ", ".join(
+        f"{p.part.part_name} (x{p.quantity})"
+        for p in db.session.query(Service_Ticket_Parts).filter_by(service_ticket_id=service_ticket.id).all()
+    )
+
     db.session.commit()
     return service_ticket_schema.jsonify(service_ticket), 200
+    
+
 
 #_________________REMOVE PART FROM SERVICE TICKET______________________
-@service_tickets_bp.route('/<int:service_ticket_id>/remove_part', methods=['PUT'])
-def remove_part_from_service_ticket(service_ticket_id):
-    service_ticket = db.session.get(Service_Tickets, service_ticket_id)
+
+@service_tickets_bp.route('/remove_part', methods=['PUT'])
+def remove_part_from_service_ticket():
+    # Get service ticket
+    service_ticket = db.session.get(Service_Tickets, request.json.get('service_ticket_id'))
     if not service_ticket:
         return jsonify({"message": "Service Ticket not found"}), 404
-    
+
+    # Get part
     part = db.session.get(Parts, request.json.get('part_id'))
     if not part:
         return jsonify({"message": "Part not found"}), 404
-    
-    service_ticket_part = db.session.query(Service_Ticket_Parts).filter_by(service_ticket_id=service_ticket.id, part_id=part.id).first()
+
+    # Validate quantity
+    quantity = request.json.get('quantity', 1)
+    if quantity is None or quantity <= 0:
+        return jsonify({"message": "Quantity must be greater than zero"}), 400
+
+    # Check if part exists in the service ticket
+    service_ticket_part = db.session.query(Service_Ticket_Parts).filter_by(service_ticket_id=service_ticket.id,part_id=part.id).first()
+
     if not service_ticket_part:
-        return jsonify({"message": "Part not associated with this Service Ticket"}), 404
-    
-    quantity = db.session.get(Service_Ticket_Parts, service_ticket_part.id).quantity
-    
-    #add the part quantity back to the part stock in the parts table
+        return jsonify({"message": "Part not found on this Service Ticket"}), 404
+
+    # Ensure we don't remove more than exists
+    if service_ticket_part.quantity < quantity:
+        return jsonify({"message": "Cannot remove more parts than are on the ticket"}), 400
+
+    # Update or delete association
+    service_ticket_part.quantity -= quantity
+    if service_ticket_part.quantity == 0:
+        db.session.delete(service_ticket_part)
+
+    # Restore stock
     part.stock += quantity
-    
-    #Remove the parts and price from the service ticket. The price MUST match the quantity being removed and existing ticket quantity can't be < 1
-    HELP
-    if service_ticket.parts:
-        parts_list = service_ticket.parts.split(", ")
-        part_entry = f"{part.part_name} (x{quantity})"
-        
-        if part_entry in parts_list:
-            parts_list.remove(part_entry)
-            service_ticket.parts = ", ".join(parts_list) if parts_list else None
-    service_ticket.price = (service_ticket.price or 0) - (part.price * quantity)
+
+    # Update price (initialize if None)
+    if service_ticket.price is None:
+        service_ticket.price = 0.0
+    service_ticket.price -= (part.price * quantity)
     if service_ticket.price < 0:
-        service_ticket.price = 0    
-   
-        
-    db.session.delete(service_ticket_part)
+        service_ticket.price = 0.0  # safety guard
+
+    # Regenerate the parts field from association table
+    service_ticket.parts = ", ".join(
+        f"{p.part.part_name} (x{p.quantity})"
+        for p in db.session.query(Service_Ticket_Parts).filter_by(service_ticket_id=service_ticket.id).all()
+    )
+    
+    confirmation_message = f"Removed {quantity} x {part.part_name} from Service Ticket {service_ticket.id}."
+
     db.session.commit()
-    return service_ticket_schema.jsonify(service_ticket), 200
+    
+    response = service_ticket_schema.dump(service_ticket)
+    response["confirmation"] = confirmation_message
+
+    return jsonify(response), 200
+
+
+
+    
+    
+ 
+
 

@@ -18,7 +18,6 @@ def create_customer():
     except ValidationError as err:
         return jsonify(err.messages), 400
     
-    
 #create a new customer instance
     new_customer = Customers(**data) #Unpack the data dictionary into the Customer model
     

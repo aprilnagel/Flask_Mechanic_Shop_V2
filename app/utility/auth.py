@@ -38,3 +38,5 @@ def token_required(f): #f stands for the function that is getting wrapped. Delet
         return f(*args, **kwargs)
     
     return decoration
+
+#customer token 

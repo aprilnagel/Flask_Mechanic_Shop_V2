@@ -49,7 +49,7 @@ class Service_Tickets(Base):
     vehicle_year: Mapped[int] = mapped_column(nullable=False)
     service_description: Mapped[str] = mapped_column(String(500), nullable=False)
     date_created: Mapped[date] = mapped_column(Date, default=date.today, nullable=False)
-    price: Mapped[float] = mapped_column(Float, nullable=True)
+    price: Mapped[float] = mapped_column(Float, default=0.0, nullable=True)
     status: Mapped[str] = mapped_column(String(50), nullable=False, default="Pending")
     parts: Mapped[str] = mapped_column(String(500), nullable=True)
     
