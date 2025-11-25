@@ -29,8 +29,10 @@ class Customers(Base):
     first_name: Mapped[str] = mapped_column(String(150), nullable=False)
     last_name: Mapped[str] = mapped_column(String(150), nullable=False)
     email: Mapped[str] = mapped_column(String(250), nullable=False, unique=True)
+    password: Mapped[str] = mapped_column(String(128), nullable=False)
     phone: Mapped[str] = mapped_column(String(20), nullable=False, unique=True)
     address: Mapped[str] = mapped_column(String(300), nullable=False)
+    role: Mapped[str] = mapped_column(String(50), nullable=False, default="customer")
     
     #--------RELATIONSHIPS---------
     
@@ -52,6 +54,8 @@ class Service_Tickets(Base):
     price: Mapped[float] = mapped_column(Float, default=0.0, nullable=True)
     status: Mapped[str] = mapped_column(String(50), nullable=False, default="Pending")
     parts: Mapped[str] = mapped_column(String(500), nullable=True)
+    mechanics_ids: Mapped[int] = mapped_column(Integer, ForeignKey("mechanics.id"), nullable=True)
+    
     
     #--------RELATIONSHIPS---------
     
@@ -76,6 +80,7 @@ class Mechanics(Base):
     phone: Mapped[str] = mapped_column(String(20), nullable=False, unique=True)
     email: Mapped[str] = mapped_column(String(250), nullable=False, unique=True)
     password: Mapped[str] = mapped_column(String(128), nullable=False)
+    role: Mapped[str] = mapped_column(String(50), nullable=False, default="mechanic")
     
     #--------RELATIONSHIPS---------
     

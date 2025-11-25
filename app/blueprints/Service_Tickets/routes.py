@@ -38,32 +38,32 @@ def get_service_tickets():
 
 #____________________________READ A SINGLE SERVICE TICKET ROUTE____________________________#
 
-@service_tickets_bp.route('/<int:service_ticket_id>', methods=['GET'])
-def get_service_ticket(service_ticket_id):
-    service_ticket = db.session.get(Service_Tickets, service_ticket_id)
+@service_tickets_bp.route('', methods=['GET'])
+def get_service_ticket():
+    service_ticket = db.session.get(Service_Tickets, request.json.get('service_ticket_id'))
     return service_ticket_schema.jsonify(service_ticket), 200
 
 
 #____________________________DELETE SERVICE TICKET ROUTE____________________________#
 
-@service_tickets_bp.route('/<int:service_ticket_id>', methods=['DELETE'])
-def delete_service_ticket(service_ticket_id):
-    service_ticket = db.session.get(Service_Tickets, service_ticket_id)
+@service_tickets_bp.route('', methods=['DELETE'])
+def delete_service_ticket():
+    service_ticket = db.session.get(Service_Tickets, request.json.get('service_ticket_id'))
     if not service_ticket:
         return jsonify({"message": "Service Ticket not found"}), 404
     db.session.delete(service_ticket)
     db.session.commit()
-    return jsonify({"message": f"Service Ticket deleted {service_ticket_id}"}), 200
+    return jsonify({"message": f"Service Ticket deleted {request.json.get('service_ticket_id')}"}), 200
 
 
 #____________________________UPDATE SERVICE TICKET ROUTE____________________________#
 
-@service_tickets_bp.route("/<int:service_ticket_id>", methods=["PUT"])
+@service_tickets_bp.route("", methods=["PUT"])
 # @limiter.limit("5 per day")
-def update_service_ticket(service_ticket_id):
+def update_service_ticket():
     
     #Query the service ticket by id
-    service_ticket = db.session.get(Service_Tickets, service_ticket_id) #Query for our service ticket to update
+    service_ticket = db.session.get(Service_Tickets, request.json.get('service_ticket_id')) #Query for our service ticket to update
     if not service_ticket: #Checking if I got a service ticket with that id
         return jsonify({"message": "Service Ticket not found"}), 404 
     #Validate and Deserialize the updates that they are sending in the body of the request
@@ -86,13 +86,13 @@ def update_service_ticket(service_ticket_id):
 
 #____________________________ASSIGN MECHANIC TO SERVICE TICKET ROUTE____________________________#
 
-@service_tickets_bp.route('/<int:service_ticket_id>/assign_mechanic/<int:mechanic_id>', methods=['PUT'])
-def assign_mechanic_to_service_ticket(service_ticket_id, mechanic_id):
-    service_ticket = db.session.get(Service_Tickets, service_ticket_id)
+@service_tickets_bp.route('/assign_mechanic/', methods=['PUT'])
+def assign_mechanic_to_service_ticket():
+    service_ticket = db.session.get(Service_Tickets, request.json.get('service_ticket_id'))
     if not service_ticket:
         return jsonify({"message": "Service Ticket not found"}), 404
     
-    mechanic = db.session.get(Mechanics, mechanic_id)
+    mechanic = db.session.get(Mechanics, request.json.get('mechanic_id'))
     
     if not mechanic:
         return jsonify({"message": "Mechanic not found"}), 404
@@ -105,13 +105,13 @@ def assign_mechanic_to_service_ticket(service_ticket_id, mechanic_id):
 
 #____________________________REMOVE MECHANIC FROM SERVICE TICKET ROUTE____________________________#
 
-@service_tickets_bp.route('/<int:service_ticket_id>/remove_mechanic/<int:mechanic_id>', methods=['PUT'])
-def remove_mechanic_from_service_ticket(service_ticket_id, mechanic_id):
-    service_ticket = db.session.get(Service_Tickets, service_ticket_id)
+@service_tickets_bp.route('/remove_mechanic/', methods=['PUT'])
+def remove_mechanic_from_service_ticket():
+    service_ticket = db.session.get(Service_Tickets, request.json.get('service_ticket_id'))
     if not service_ticket:
         return jsonify({"message": "Service Ticket not found"}), 404
     
-    mechanic = db.session.get(Mechanics, mechanic_id)
+    mechanic = db.session.get(Mechanics, request.json.get('mechanic_id'))
     
     if not mechanic:
         return jsonify({"message": "Mechanic not found"}), 404
@@ -169,11 +169,16 @@ def add_part_to_service_ticket():
         f"{p.part.part_name} (x{p.quantity})"
         for p in db.session.query(Service_Ticket_Parts).filter_by(service_ticket_id=service_ticket.id).all()
     )
+    
+    confirmation_message = f"Added {quantity} x {part.part_name} to Service Ticket {service_ticket.id}."
+
+     # Commit all changes
 
     db.session.commit()
-    return service_ticket_schema.jsonify(service_ticket), 200
+    response = service_ticket_schema.dump(service_ticket)
+    response["confirmation"] = confirmation_message
+    return jsonify(response), 200
     
-
 
 #_________________REMOVE PART FROM SERVICE TICKET______________________
 

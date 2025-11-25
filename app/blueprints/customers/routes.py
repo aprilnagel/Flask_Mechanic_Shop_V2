@@ -37,31 +37,46 @@ def get_customers():
 
 #____________________________READ A SINGLE CUSTOMER ROUTE____________________________
 
-@customers_bp.route('/<int:customers_id>', methods=['GET'])
-# @limiter.limit("15 per hour")
-def get_customer(customers_id):
-    customer = db.session.get(Customers, customers_id)
-    return customer_schema.jsonify(customer), 200
+@customers_bp.route('/<int:customer_id>', methods=['GET'])
+def get_customer(customer_id):
+    # Query by primary key
+    customer = db.session.get(Customers, customer_id)
+
+    if not customer:
+        return jsonify({'message': 'Customer not found'}), 404
+
+    response = {
+        'id': customer.id,
+        'first_name': customer.first_name,
+        'last_name': customer.last_name,
+        'email': customer.email,
+        'phone': customer.phone,
+        'address': customer.address  
+    }
+    return jsonify(response), 200
+   
+
+
 
 
 #____________________________DELETE CUSTOMER ROUTE____________________________
 
-@customers_bp.route('/<int:customers_id>', methods=['DELETE'])
-def delete_customer(customers_id):
-    customer = db.session.get(Customers, customers_id)
+@customers_bp.route('', methods=['DELETE'])
+def delete_customer():
+    customer = db.session.get(Customers, request.json.get('customers_id'))
     if not customer:
         return jsonify({"message": "Customer not found"}), 404
     db.session.delete(customer)
     db.session.commit()
-    return jsonify({"message": f"Customer deleted {customers_id}"}), 200
+    return jsonify({"message": f"Customer deleted {request.json.get('customers_id')}"}), 200
 
 
 #____________________________UPDATE CUSTOMER ROUTE____________________________
 
-@customers_bp.route('/<int:customers_id>', methods=["PUT"])
-def update_customer(customers_id):
+@customers_bp.route('', methods=["PUT"])
+def update_customer():
     #Query the mechanic by id
-    customer = db.session.get(Customers, customers_id) #Query for our mechanic to update
+    customer = db.session.get(Customers, request.json.get('customers_id')) #Query for our mechanic to update
     if not customer: #Checking if I got a mechanic with that id
         return jsonify({"message": "Customer not found"}), 404 
     #Validate and Deserialize the updates that they are sending in the body of the request
@@ -70,8 +85,6 @@ def update_customer(customers_id):
     except ValidationError as e:
         return jsonify({"message": e.messages}), 400
     # for each of the values that they are sending, we will change the value of the queried object
-    
-    # 
     
     for key, value in customer_data.items():
         setattr(customer, key, value)

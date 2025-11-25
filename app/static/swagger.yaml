@@ -1,0 +1,17 @@
+swagger: '2.0'
+info:
+  title: "Bagel's Repair Shop API"
+  description: "API documentation for Bagel's Repair Shop"
+  version: "0.0.1"
+
+host: "127.0.0.1:5000" # Update with your server's host and port. It's in development right now
+schemes:
+  - "http"
+consumes:
+  - "application/json" #The API consumes JSON requests
+produces:
+  - "application/json" #The API produces JSON responses
+
+paths: #Information about your API endpoints will go here
+
+definitions: ##Information about the shape of input and output json

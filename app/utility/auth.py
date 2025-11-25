@@ -12,6 +12,7 @@ def encode_token(mechanic_id):
         'iat': datetime.now(timezone.utc),  # Issued at time
         'sub': str(mechanic_id), #VERY IMPORTANT, SET YOUR USER ID TO A STRING
         
+        
     }
     token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
     return token
