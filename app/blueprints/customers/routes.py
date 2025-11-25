@@ -146,3 +146,10 @@ def get_my_tickets():
     
     
     return service_tickets_schema.jsonify(tickets), 200
+
+
+#___________logout route (for token-based auth, this is typically handled on the client side)___________
+@customers_bp.route('/logout', methods=['POST'])
+@token_required
+def logout():
+    return jsonify({"message": "Logout successful"}), 200

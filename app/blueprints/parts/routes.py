@@ -3,7 +3,7 @@ from . import parts_bp
 from .schemas import parts_schema, part_schema
 from flask import request, jsonify
 from marshmallow import ValidationError
-from app.models import Parts, db
+from app.models import Parts, db, Service_Ticket_Parts
 
 #_________________CREATE PART______________________
 @parts_bp.route('', methods=['POST'])
@@ -81,6 +81,12 @@ def delete_part():
     part = db.session.get(Parts, part_id)
     if not part:
         return jsonify({"message": "Part not found"}), 404
+    
+    #if the part is on a ticket, prevent deletion and return a message saying the part cannot be deleted because it is on a ticket
+    if db.session.query(Service_Ticket_Parts).filter_by(part_id=part_id).first():
+        return jsonify({"message": "Part cannot be deleted because it is associated with a service ticket"}), 400
+
+        
     db.session.delete(part)
     db.session.commit()
     return jsonify({"message": f"Part {part_id} deleted successfully"}), 200

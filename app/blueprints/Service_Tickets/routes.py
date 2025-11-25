@@ -276,6 +276,8 @@ def remove_part_from_service_ticket():
     if service_ticket_part.quantity < quantity:
         return jsonify({"message": "Cannot remove more parts than are on the ticket"}), 400
 
+    
+    
     # Update or delete association
     service_ticket_part.quantity -= quantity
     if service_ticket_part.quantity == 0:

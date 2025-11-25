@@ -134,3 +134,10 @@ def get_my_tickets():
     if not tickets:
         return jsonify({"message": "No tickets found for this mechanic"}), 404
     return service_tickets_schema.jsonify(tickets), 200
+  
+  
+#____________________LOGOUT ROUTE (for token-based auth, this is typically handled on the client side)____________________
+@mechanics_bp.route('/logout', methods=['POST'])
+@token_required
+def logout():
+    return jsonify({"message": "Logout successful"}), 200
