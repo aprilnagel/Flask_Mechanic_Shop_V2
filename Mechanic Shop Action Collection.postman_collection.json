@@ -13,11 +13,21 @@
 				{
 					"name": "Create Customers",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NjQwNDQ1MjQsImlhdCI6MTc2NDA0MDkyNCwic3ViIjoiMSJ9.b6wlScSGr0Tebf1UeWzqsPZ7cnCyXu6IavEbXalsJgI",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"first_name\": \"Jim.\",\r\n    \"last_name\": \"Gordon\",\r\n    \"email\": \"jgordon1@gpd.org\",\r\n    \"address\": \"567 Avenue X Gotham\",\r\n    \"phone\": \"1-555-0911\"\r\n\r\n}",
+							"raw": "{\r\n    \"first_name\": \"Jim\",\r\n    \"last_name\": \"Gordon\",\r\n    \"email\": \"jgordon@gpd.org\",\r\n    \"password\": \"1234\",\r\n    \"address\": \"250 52nd Street Gotham\",\r\n    \"phone\": \"1-555-1911\"\r\n\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -77,26 +87,21 @@
 				},
 				{
 					"name": "Get Customer",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
 					"request": {
 						"auth": {
-							"type": "basic"
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NjQwOTM5MTQsImlhdCI6MTc2NDA5MDMxNCwic3ViIjoiMSIsInJvbGUiOiJjdXN0b21lciJ9.fh3aGCq3fMUpGqjSl04d1FLWJbDt_A7T5MfmKNGZEF0",
+									"type": "string"
+								}
+							]
 						},
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
 						"url": {
-							"raw": "http://127.0.0.1:5000/customers/3",
+							"raw": "http://127.0.0.1:5000/customers/2",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -107,7 +112,7 @@
 							"port": "5000",
 							"path": [
 								"customers",
-								"3"
+								"2"
 							]
 						}
 					},
@@ -121,7 +126,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NjM2NzE0MjEsImlhdCI6MTc2MzY2NzgyMSwic3ViIjoiNiJ9.88tdBxeUiGZbXdahGuwF3I2cE5dPXHloJyvl9ZhLdU8",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NjQwOTA5OTYsImlhdCI6MTc2NDA4NzM5Niwic3ViIjoiMSIsInJvbGUiOiJjdXN0b21lciJ9.4jTh3xrTT6iSbj3l33SCZ23J7U8IMZC4pw6-Dxf1gSM",
 									"type": "string"
 								}
 							]
@@ -130,7 +135,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"first_name\": \"The\",\r\n    \"last_name\": \"Joker\",\r\n    \"email\": \"ysosrs@gmail.com\",\r\n    \"phone\": \"1-hahahah\",\r\n    \"address\": \"Gotham's Underbelly\"\r\n}",
+							"raw": "{\r\n    \r\n    \"first_name\": \"The\",\r\n    \"last_name\": \"Joker\",\r\n    \"email\": \"ysosrs@haha.com\",\r\n    \"phone\": \"1-555-HAHA\",\r\n    \"address\": \"Gotham's Underbelly :)\",\r\n    \"password\": \"1234\"\r\n\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -138,7 +143,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://127.0.0.1:5000/customers/4",
+							"raw": "http://127.0.0.1:5000/customers/2",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -149,7 +154,7 @@
 							"port": "5000",
 							"path": [
 								"customers",
-								"4"
+								"2"
 							]
 						}
 					},
@@ -159,7 +164,14 @@
 					"name": "Delete Customer",
 					"request": {
 						"auth": {
-							"type": "noauth"
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NjQwOTA5OTYsImlhdCI6MTc2NDA4NzM5Niwic3ViIjoiMSIsInJvbGUiOiJjdXN0b21lciJ9.4jTh3xrTT6iSbj3l33SCZ23J7U8IMZC4pw6-Dxf1gSM",
+									"type": "string"
+								}
+							]
 						},
 						"method": "DELETE",
 						"header": [],
@@ -176,6 +188,76 @@
 							"path": [
 								"customers",
 								"6"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "My Tickets",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NjQwOTU0NTEsImlhdCI6MTc2NDA5MTg1MSwic3ViIjoiMiIsInJvbGUiOiJjdXN0b21lciJ9.H-Cw9gvKcaIwEPuFCqa_9C78OOS7kLJQZt8mOztdg_c",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:5000/customers/my_tickets",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"customers",
+								"my_tickets"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NjQwOTU0NTEsImlhdCI6MTc2NDA5MTg1MSwic3ViIjoiMiIsInJvbGUiOiJjdXN0b21lciJ9.H-Cw9gvKcaIwEPuFCqa_9C78OOS7kLJQZt8mOztdg_c",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"part_id\": 2,\r\n    \"additional_stock\": 5\r\n}"
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/customers/logout",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"customers",
+								"logout"
 							]
 						}
 					},
@@ -203,7 +285,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"email\": \"mech1@gmail.com\", \r\n    \"password\": \"1234\",\r\n    \"first_name\": \"John\",\r\n    \"last_name\": \"Doe\",\r\n    \"phone\": \"1-555-1234\",\r\n    \"specialty\": \"engine\"\r\n}",
+							"raw": "{\r\n    \"email\": \"mech5@gmail.com\", \r\n    \"password\": \"1234\",\r\n    \"first_name\": \"Lenny\",\r\n    \"last_name\": \"Good\",\r\n    \"phone\": \"1-555-6789\",\r\n    \"specialty\": \"used parts\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -244,7 +326,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"email\": \"mech1@gmail.com\",\r\n    \"password\": \"1234\"\r\n}\r\n",
+							"raw": "{\r\n    \"email\": \"mech2@gmail.com\",\r\n    \"password\": \"1234\"\r\n}\r\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -275,6 +357,16 @@
 						"disableBodyPruning": true
 					},
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NjQwOTQxNzAsImlhdCI6MTc2NDA5MDU3MCwic3ViIjoiMSIsInJvbGUiOiJtZWNoYW5pYyJ9.bCOQGNvRYZl_euM7DqzC2WpK6h7xwwpLZs-nZnu6-BU",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"body": {
@@ -349,7 +441,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NjM3NzE0OTQsImlhdCI6MTc2Mzc2Nzg5NCwic3ViIjoiNyJ9.neUugkWnX6HyVmruUcnmhfFrchS33CetDgJCXiII0sY",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NjQwOTQxNzAsImlhdCI6MTc2NDA5MDU3MCwic3ViIjoiMSIsInJvbGUiOiJtZWNoYW5pYyJ9.bCOQGNvRYZl_euM7DqzC2WpK6h7xwwpLZs-nZnu6-BU",
 									"type": "string"
 								}
 							]
@@ -357,7 +449,7 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://127.0.0.1:5000/mechanics",
+							"raw": "http://127.0.0.1:5000/mechanics/1",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -367,7 +459,8 @@
 							],
 							"port": "5000",
 							"path": [
-								"mechanics"
+								"mechanics",
+								"1"
 							]
 						}
 					},
@@ -381,7 +474,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NjM3NzE1NzcsImlhdCI6MTc2Mzc2Nzk3Nywic3ViIjoiNiJ9.yqCZb-NlDtKdkbDwh5WLB1Od3c3AQ_jol1cr_yA_zaU",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NjQwOTQ3NDAsImlhdCI6MTc2NDA5MTE0MCwic3ViIjoiMiIsInJvbGUiOiJtZWNoYW5pYyJ9.yGg8FTmGdwnFbDQgBmofpQtFQf5zfOsC_ffa4Tmm_Zs",
 									"type": "string"
 								}
 							]
@@ -390,7 +483,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"first_name\": \"Kyle\",\r\n    \"last_name\": \"Good\",\r\n    \"email\": \"mech6@gmail.com\",\r\n    \"password\": \"1234\",\r\n    \"phone\": \"99999\",\r\n    \"specialty\": \"used parts\"\r\n}",
+							"raw": "{\r\n    \"first_name\": \"Jane\",\r\n    \"last_name\": \"Doe\",\r\n    \"email\": \"mech2@gmail.com\",\r\n    \"password\": \"1234\",\r\n    \"phone\": \"1-555-1234\",\r\n    \"specialty\": \"transmission\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -417,8 +510,70 @@
 				{
 					"name": "My Tickets",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NjQwOTQ3NDAsImlhdCI6MTc2NDA5MTE0MCwic3ViIjoiMiIsInJvbGUiOiJtZWNoYW5pYyJ9.yGg8FTmGdwnFbDQgBmofpQtFQf5zfOsC_ffa4Tmm_Zs",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
-						"header": []
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:5000/mechanics/my_tickets",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"mechanics",
+								"my_tickets"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NjQwOTU0NTEsImlhdCI6MTc2NDA5MTg1MSwic3ViIjoiMiIsInJvbGUiOiJjdXN0b21lciJ9.H-Cw9gvKcaIwEPuFCqa_9C78OOS7kLJQZt8mOztdg_c",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"part_id\": 2,\r\n    \"additional_stock\": 5\r\n}"
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/mechanics/logout",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"mechanics",
+								"logout"
+							]
+						}
 					},
 					"response": []
 				}
@@ -431,13 +586,20 @@
 					"name": "Create Ticket",
 					"request": {
 						"auth": {
-							"type": "noauth"
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NjQwOTU0NTEsImlhdCI6MTc2NDA5MTg1MSwic3ViIjoiMiIsInJvbGUiOiJjdXN0b21lciJ9.H-Cw9gvKcaIwEPuFCqa_9C78OOS7kLJQZt8mOztdg_c",
+									"type": "string"
+								}
+							]
 						},
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"price\": \"5367.01\",\r\n    \"service_description\": \"new rims that say 'Gothams white knight'\",\r\n    \"vehicle_make\": \"Rivian\",\r\n    \"vehicle_model\": \"R1\",\r\n    \"vehicle_year\": \"2026\",\r\n    \"customer_id\": 6\r\n    \r\n}",
+							"raw": "{\r\n\r\n    \"service_description\": \"new engine\",\r\n    \"vehicle_make\": \"Ford\",\r\n    \"vehicle_model\": \"Crown Victoria\",\r\n    \"vehicle_year\": \"1999\",\r\n    \"customer_id\": 1\r\n    \r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -468,7 +630,14 @@
 					},
 					"request": {
 						"auth": {
-							"type": "noauth"
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NjQwOTU0NTEsImlhdCI6MTc2NDA5MTg1MSwic3ViIjoiMiIsInJvbGUiOiJjdXN0b21lciJ9.H-Cw9gvKcaIwEPuFCqa_9C78OOS7kLJQZt8mOztdg_c",
+									"type": "string"
+								}
+							]
 						},
 						"method": "GET",
 						"header": [],
@@ -502,12 +671,28 @@
 					"name": "Add mechanic",
 					"request": {
 						"auth": {
-							"type": "noauth"
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NjQwOTU0NTEsImlhdCI6MTc2NDA5MTg1MSwic3ViIjoiMiIsInJvbGUiOiJjdXN0b21lciJ9.H-Cw9gvKcaIwEPuFCqa_9C78OOS7kLJQZt8mOztdg_c",
+									"type": "string"
+								}
+							]
 						},
 						"method": "PUT",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"service_ticket_id\": 1,\r\n    \"mechanic_id\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": "http://127.0.0.1:5000/service_tickets/1/assign_mechanic/2",
+							"raw": "http://127.0.0.1:5000/service_tickets/assign_mechanic",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -518,9 +703,7 @@
 							"port": "5000",
 							"path": [
 								"service_tickets",
-								"1",
-								"assign_mechanic",
-								"2"
+								"assign_mechanic"
 							]
 						}
 					},
@@ -530,12 +713,28 @@
 					"name": "Remove Mechanic",
 					"request": {
 						"auth": {
-							"type": "noauth"
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NjQwOTU0NTEsImlhdCI6MTc2NDA5MTg1MSwic3ViIjoiMiIsInJvbGUiOiJjdXN0b21lciJ9.H-Cw9gvKcaIwEPuFCqa_9C78OOS7kLJQZt8mOztdg_c",
+									"type": "string"
+								}
+							]
 						},
 						"method": "PUT",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"service_ticket_id\": 1,\r\n    \"mechanic_id\": 4\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": "http://127.0.0.1:5000/service_tickets/1/remove_mechanic/",
+							"raw": "http://127.0.0.1:5000/service_tickets/remove_mechanic",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -546,9 +745,7 @@
 							"port": "5000",
 							"path": [
 								"service_tickets",
-								"1",
-								"remove_mechanic",
-								""
+								"remove_mechanic"
 							]
 						}
 					},
@@ -561,13 +758,20 @@
 					},
 					"request": {
 						"auth": {
-							"type": "noauth"
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NjQwOTc5ODAsImlhdCI6MTc2NDA5NDM4MCwic3ViIjoiMSIsInJvbGUiOiJtZWNoYW5pYyJ9.3WYwWTKASAIdECzt5MABJLlO5aHvfMx0v1aLG8JW36I",
+									"type": "string"
+								}
+							]
 						},
 						"method": "GET",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"price\": \"5367.01\",\r\n    \"service_description\": \"new rims that say 'Gothams white knight'\",\r\n    \"vehicle_make\": \"Rivian\",\r\n    \"vehicle_model\": \"R1\",\r\n    \"vehicle_year\": \"2026\",\r\n    \"customer_id\": 6\r\n    \r\n}",
+							"raw": "",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -575,7 +779,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://127.0.0.1:5000/service_tickets/2",
+							"raw": "http://127.0.0.1:5000/service_tickets/3",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -586,7 +790,7 @@
 							"port": "5000",
 							"path": [
 								"service_tickets",
-								"2"
+								"3"
 							]
 						}
 					},
@@ -596,13 +800,20 @@
 					"name": "Update Ticket",
 					"request": {
 						"auth": {
-							"type": "noauth"
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NjQwOTc5ODAsImlhdCI6MTc2NDA5NDM4MCwic3ViIjoiMSIsInJvbGUiOiJtZWNoYW5pYyJ9.3WYwWTKASAIdECzt5MABJLlO5aHvfMx0v1aLG8JW36I",
+									"type": "string"
+								}
+							]
 						},
 						"method": "PUT",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"customer_id\": 3,\r\n    \"date_created\": \"2025-11-21\",\r\n    \"id\": 2,\r\n    \"price\": 300.50,\r\n    \"service_description\": \"new stereo installation\",\r\n    \"status\": \"Pending\",\r\n    \"vehicle_make\": \"Volkswagon\",\r\n    \"vehicle_model\": \"Jetta\",\r\n    \"vehicle_year\": 2023\r\n    \r\n}",
+							"raw": "{\r\n    \"service_ticket_id\": 2,\r\n    \"status\": \"Complete\",\r\n    \"customer_id\":\"2\",\r\n    \"service_description\": \"complete restoration\",\r\n    \"vehicle_make\": \"Chevrolet\",\r\n    \"vehicle_model\": \"Impala\",\r\n    \"vehicle_year\": \"2005\",\r\n    \"completion_date\": \"\"\r\n\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -610,7 +821,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://127.0.0.1:5000/service_tickets/2",
+							"raw": "http://127.0.0.1:5000/service_tickets",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -620,18 +831,9 @@
 							],
 							"port": "5000",
 							"path": [
-								"service_tickets",
-								"2"
+								"service_tickets"
 							]
 						}
-					},
-					"response": []
-				},
-				{
-					"name": "New Request",
-					"request": {
-						"method": "GET",
-						"header": []
 					},
 					"response": []
 				},
@@ -639,16 +841,69 @@
 					"name": "Delete Ticket",
 					"request": {
 						"auth": {
-							"type": "noauth"
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NjQwOTU0NTEsImlhdCI6MTc2NDA5MTg1MSwic3ViIjoiMiIsInJvbGUiOiJjdXN0b21lciJ9.H-Cw9gvKcaIwEPuFCqa_9C78OOS7kLJQZt8mOztdg_c",
+									"type": "string"
+								}
+							]
 						},
 						"method": "DELETE",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"customer_id\": 3,\r\n    \"date_created\": \"2025-11-21\",\r\n    \"id\": 2,\r\n    \"price\": 300.50,\r\n    \"service_description\": \"new stereo installation\",\r\n    \"status\": \"Pending\",\r\n    \"vehicle_make\": \"Volkswagon\",\r\n    \"vehicle_model\": \"Jetta\",\r\n    \"vehicle_year\": 2023\r\n    \r\n}"
+							"raw": "{\r\n    \"service_ticket_id\": 6\r\n    \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
 						},
 						"url": {
-							"raw": "http://127.0.0.1:5000/service_tickets/4",
+							"raw": "http://127.0.0.1:5000/service_tickets",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"service_tickets"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add part to ticket",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NjQwOTg5MzcsImlhdCI6MTc2NDA5NTMzNywic3ViIjoiMSIsInJvbGUiOiJtZWNoYW5pYyJ9.ambhfTvihqGgeYarrdKumY-gBE1Q4eABf0q-FaJZaNk",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"service_ticket_id\": 10,\r\n    \"part_id\": 9,\r\n    \"quantity\": 2\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n    \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/service_tickets/add_part",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -659,7 +914,250 @@
 							"port": "5000",
 							"path": [
 								"service_tickets",
-								"4"
+								"add_part"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove Part from Ticket",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NjQwOTk0MDMsImlhdCI6MTc2NDA5NTgwMywic3ViIjoiMSIsInJvbGUiOiJtZWNoYW5pYyJ9.itASVycokcKqYhp9RoMR3JNeyn3le-LOsVPGHHovN6Q",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"service_ticket_id\": 10,\r\n    \"part_id\": 9,\r\n    \"quantity\": 1\r\n\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/service_tickets/remove_part",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"service_tickets",
+								"remove_part"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "PARTS",
+			"item": [
+				{
+					"name": "Create Parts",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NjQwOTU0NTEsImlhdCI6MTc2NDA5MTg1MSwic3ViIjoiMiIsInJvbGUiOiJjdXN0b21lciJ9.H-Cw9gvKcaIwEPuFCqa_9C78OOS7kLJQZt8mOztdg_c",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"part_name\": \"headlights\",\r\n    \"price\": \"39.99\",\r\n    \"stock\": 10\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/parts",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"parts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Part",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NjQwOTk0MDMsImlhdCI6MTc2NDA5NTgwMywic3ViIjoiMSIsInJvbGUiOiJtZWNoYW5pYyJ9.itASVycokcKqYhp9RoMR3JNeyn3le-LOsVPGHHovN6Q",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"part_id\": 15\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/parts",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"parts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Parts",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NjQwOTk0MDMsImlhdCI6MTc2NDA5NTgwMywic3ViIjoiMSIsInJvbGUiOiJtZWNoYW5pYyJ9.itASVycokcKqYhp9RoMR3JNeyn3le-LOsVPGHHovN6Q",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"part_id\": 3,\r\n    \"quantity\": 2\r\n}"
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/parts",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"parts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Specific Part",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NjQwOTk0MDMsImlhdCI6MTc2NDA5NTgwMywic3ViIjoiMSIsInJvbGUiOiJtZWNoYW5pYyJ9.itASVycokcKqYhp9RoMR3JNeyn3le-LOsVPGHHovN6Q",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:5000/parts/2",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"parts",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Part stock",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NjQwOTk0MDMsImlhdCI6MTc2NDA5NTgwMywic3ViIjoiMSIsInJvbGUiOiJtZWNoYW5pYyJ9.itASVycokcKqYhp9RoMR3JNeyn3le-LOsVPGHHovN6Q",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"part_id\": 2,\r\n    \"additional_stock\": 5\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/parts/add_stock",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"parts",
+								"add_stock"
 							]
 						}
 					},
