@@ -1,3 +1,4 @@
+from app.utility.auth import mechanic_required, token_required
 from . import service_tickets_bp
 from .schemas import service_ticket_schema, service_tickets_schema
 from flask import request, jsonify
@@ -9,6 +10,8 @@ from app.extensions import limiter, cache
 #__________________CREATE SERVICE TICKET ROUTE____________________#
 
 @service_tickets_bp.route('', methods=['POST'])
+@token_required
+@mechanic_required
 
 def create_service_ticket():
     #Validate and Deserialize the data
@@ -30,6 +33,8 @@ def create_service_ticket():
 #__________________READ SERVICE TICKETS ROUTE____________________#
 
 @service_tickets_bp.route('', methods=['GET'])
+@token_required
+@mechanic_required
 @cache.cached(timeout=30)
 def get_service_tickets():
     service_tickets = db.session.query(Service_Tickets).all()
@@ -38,15 +43,29 @@ def get_service_tickets():
 
 #____________________________READ A SINGLE SERVICE TICKET ROUTE____________________________#
 
-@service_tickets_bp.route('', methods=['GET'])
-def get_service_ticket():
-    service_ticket = db.session.get(Service_Tickets, request.json.get('service_ticket_id'))
+#read a single service ticket but customers can only see their own tickets
+@service_tickets_bp.route('/<int:service_ticket_id>', methods=['GET'])
+@token_required
+def get_service_ticket(service_ticket_id):
+    service_ticket = db.session.get(Service_Tickets, service_ticket_id)
+    if not service_ticket:
+        return jsonify({"message": "Service Ticket not found"}), 404
+    
+    if request.logged_in_role == 'mechanic':
+        pass  # Mechanics can access all tickets
+    #If the logged in user is a customer, ensure they can only access their own tickets
+    if request.logged_in_role == 'customer':
+        if service_ticket.customer_id != int(request.logged_in_user_id):
+            return jsonify({"message": "Access denied: You can only view your own service tickets."}), 403
+    
     return service_ticket_schema.jsonify(service_ticket), 200
 
 
 #____________________________DELETE SERVICE TICKET ROUTE____________________________#
 
 @service_tickets_bp.route('', methods=['DELETE'])
+@token_required
+@mechanic_required
 def delete_service_ticket():
     service_ticket = db.session.get(Service_Tickets, request.json.get('service_ticket_id'))
     if not service_ticket:
@@ -58,28 +77,24 @@ def delete_service_ticket():
 
 #____________________________UPDATE SERVICE TICKET ROUTE____________________________#
 
-@service_tickets_bp.route("", methods=["PUT"])
-# @limiter.limit("5 per day")
+#update a service ticket by querying by id
+@service_tickets_bp.route('', methods=['PUT'])
+@token_required
+@mechanic_required
 def update_service_ticket():
+    service_ticket = db.session.get(Service_Tickets, request.json.get('service_ticket_id'))
+    if not service_ticket:
+        return jsonify({"message": "Service Ticket not found"}), 404
     
-    #Query the service ticket by id
-    service_ticket = db.session.get(Service_Tickets, request.json.get('service_ticket_id')) #Query for our service ticket to update
-    if not service_ticket: #Checking if I got a service ticket with that id
-        return jsonify({"message": "Service Ticket not found"}), 404 
-    #Validate and Deserialize the updates that they are sending in the body of the request
-    try:
-        service_ticket_data = service_ticket_schema.load(request.json)
-    except ValidationError as e:
-        return jsonify({"message": e.messages}), 400
-    # for each of the values that they are sending, we will change the value of the queried object
+    #Update fields
+    for key, value in request.json.items():
+        if key != 'service_ticket_id' and hasattr(service_ticket, key):
+            setattr(service_ticket, key, value)
+    #If status is being updated to "Complete", set the completion_date to today
+    if 'status' in request.json and request.json['status'] == "Complete":
+        from datetime import date
+        service_ticket.completion_date = date.today()
     
-    # if service_ticket_data['description']:
-    #   service_ticket.description = service_ticket_data["description"]
-
-    for key, value in service_ticket_data.items():
-        setattr(service_ticket, key, value)
-        
-    # commit the changes
     db.session.commit()
     return service_ticket_schema.jsonify(service_ticket), 200
 
@@ -87,39 +102,87 @@ def update_service_ticket():
 #____________________________ASSIGN MECHANIC TO SERVICE TICKET ROUTE____________________________#
 
 @service_tickets_bp.route('/assign_mechanic/', methods=['PUT'])
+@token_required
+@mechanic_required
 def assign_mechanic_to_service_ticket():
-    service_ticket = db.session.get(Service_Tickets, request.json.get('service_ticket_id'))
+    # 1. Query service ticket by ID
+    service_ticket_id = request.json.get('service_ticket_id')
+    service_ticket = db.session.get(Service_Tickets, service_ticket_id)
     if not service_ticket:
         return jsonify({"message": "Service Ticket not found"}), 404
-    
-    mechanic = db.session.get(Mechanics, request.json.get('mechanic_id'))
-    
+
+    # 2. Query mechanic by ID
+    mechanic_id = request.json.get('mechanic_id')
+    mechanic = db.session.get(Mechanics, mechanic_id)
     if not mechanic:
         return jsonify({"message": "Mechanic not found"}), 404
-    
+
+    # 3. Prevent duplicate assignment
+    if mechanic in service_ticket.mechanics_service_tickets:
+        return jsonify({"message": f"Mechanic {mechanic.id} is already assigned to Service Ticket {service_ticket.id}."}), 400
+
+    # 4. Add mechanic to service ticket
     service_ticket.mechanics_service_tickets.append(mechanic)
+
+    # 5. Update status to "In Progress"
+    service_ticket.status = "In Progress"
+
+    # 6. Confirmation message
+    confirmation_message = (
+        f"Mechanic {mechanic.id}, {mechanic.first_name} {mechanic.last_name} assigned to Service Ticket {service_ticket.id}. "
+        f"Status set to In Progress."
+    )
+
+    # 7. Commit changes and return updated ticket
     db.session.commit()
-    
-    return service_ticket_schema.jsonify(service_ticket), 200
+    response = service_ticket_schema.dump(service_ticket)
+    response["confirmation"] = confirmation_message
+
+    return jsonify(response), 200
+
 
 
 #____________________________REMOVE MECHANIC FROM SERVICE TICKET ROUTE____________________________#
 
 @service_tickets_bp.route('/remove_mechanic/', methods=['PUT'])
+@token_required
+@mechanic_required
 def remove_mechanic_from_service_ticket():
-    service_ticket = db.session.get(Service_Tickets, request.json.get('service_ticket_id'))
+    # 1. Query service ticket by ID
+    service_ticket_id = request.json.get('service_ticket_id')
+    service_ticket = db.session.get(Service_Tickets, service_ticket_id)
     if not service_ticket:
         return jsonify({"message": "Service Ticket not found"}), 404
-    
-    mechanic = db.session.get(Mechanics, request.json.get('mechanic_id'))
-    
+
+    # 2. Query mechanic by ID
+    mechanic_id = request.json.get('mechanic_id')
+    mechanic = db.session.get(Mechanics, mechanic_id)
     if not mechanic:
         return jsonify({"message": "Mechanic not found"}), 404
-    
+
+    # 3. Check if mechanic is assigned
+    if mechanic not in service_ticket.mechanics_service_tickets:
+        return jsonify({"message": f"Mechanic {mechanic.id} is not assigned to Service Ticket {service_ticket.id}."}), 400
+
+    # 4. Remove mechanic from service ticket
     service_ticket.mechanics_service_tickets.remove(mechanic)
+
+    # 5. Update status if no mechanics remain
+    if not service_ticket.mechanics_service_tickets:
+        service_ticket.status = "Pending"  # or "Open" depending on your workflow
+
+    # 6. Confirmation message
+    confirmation_message = (
+        f"Mechanic {mechanic.id}, {mechanic.first_name} {mechanic.last_name} removed from Service Ticket {service_ticket.id}."
+        f" Current status: {service_ticket.status}."
+    )
+
+    # 7. Commit changes and return updated ticket
     db.session.commit()
-    
-    return service_ticket_schema.jsonify(service_ticket), 200
+    response = service_ticket_schema.dump(service_ticket)
+    response["confirmation"] = confirmation_message
+
+    return jsonify(response), 200
 
 
 #_________________ADD PART TO SERVICE TICKET______________________
@@ -127,6 +190,8 @@ def remove_mechanic_from_service_ticket():
 #we will need to query the service ticket to see of the part already exists. If it does, we will just update the quantity and price. We will not create a duplicate entry in the service ticket parts association table. Then we will subtract the part quantity from the parts stock in the parts table and update the service ticket price accordingly.
 
 @service_tickets_bp.route('/add_part', methods=['PUT'])
+@token_required
+@mechanic_required
 def add_part_to_service_ticket():
     # Get service ticket
     service_ticket = db.session.get(Service_Tickets, request.json.get('service_ticket_id'))
@@ -183,6 +248,8 @@ def add_part_to_service_ticket():
 #_________________REMOVE PART FROM SERVICE TICKET______________________
 
 @service_tickets_bp.route('/remove_part', methods=['PUT'])
+@token_required
+@mechanic_required
 def remove_part_from_service_ticket():
     # Get service ticket
     service_ticket = db.session.get(Service_Tickets, request.json.get('service_ticket_id'))
@@ -238,7 +305,6 @@ def remove_part_from_service_ticket():
     response["confirmation"] = confirmation_message
 
     return jsonify(response), 200
-
 
 
     

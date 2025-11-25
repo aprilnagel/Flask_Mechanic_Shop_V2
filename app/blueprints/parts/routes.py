@@ -1,3 +1,4 @@
+from app.utility.auth import mechanic_required, token_required
 from . import parts_bp
 from .schemas import parts_schema, part_schema
 from flask import request, jsonify
@@ -6,7 +7,12 @@ from app.models import Parts, db
 
 #_________________CREATE PART______________________
 @parts_bp.route('', methods=['POST'])
+@token_required
+@mechanic_required
 def create_part():
+    
+    if request.logged_in_role != 'mechanic':
+        return jsonify({'message': 'Access forbidden: Mechanics only'}), 403
     try:
         data = part_schema.load(request.json)
     except ValidationError as err:
@@ -19,20 +25,36 @@ def create_part():
 
 #__________________GET ALL PARTS______________________
 @parts_bp.route('', methods=['GET'])
+@token_required
+@mechanic_required
 def get_parts():
+    if request.logged_in_role != 'mechanic':
+        return jsonify({'message': 'Access forbidden: Mechanics only'}), 403
+    
     parts = db.session.query(Parts).all()
     return parts_schema.jsonify(parts), 200
 
 #__________________GET PART BY ID______________________
 
+#put part_id in the request body to get specific part. Return the part details.
 @parts_bp.route('/<int:part_id>', methods=['GET'])
-def get_part(part_id):
+@token_required
+@mechanic_required
+def get_part_by_id(part_id):
+    if request.logged_in_role != 'mechanic':
+        return jsonify({'message': 'Access forbidden: Mechanics only'}), 403
     part = db.session.get(Parts, part_id)
+    if not part:
+        return jsonify({"message": "Part not found"}), 404
     return part_schema.jsonify(part), 200
 
 #__________________UPDATE PART______________________
 @parts_bp.route('/<int:part_id>', methods=['PUT'])
+@token_required
+@mechanic_required
 def update_part(part_id):
+    if request.logged_in_role != 'mechanic':
+        return jsonify({'message': 'Access forbidden: Mechanics only'}), 403
     part = db.session.get(Parts, part_id)
     if not part:
         return jsonify({"message": "Part not found"}), 404
@@ -48,20 +70,30 @@ def update_part(part_id):
     return part_schema.jsonify(part), 200
 
 #__________________DELETE PART______________________
-@parts_bp.route('/<int:part_id>', methods=['DELETE'])
-def delete_part(part_id):
+#delete part by part_id given in the request body. return a message saying the part was deleted.
+@parts_bp.route('', methods=['DELETE'])
+@token_required
+@mechanic_required
+def delete_part():
+    if request.logged_in_role != 'mechanic':
+        return jsonify({'message': 'Access forbidden: Mechanics only'}), 403
+    part_id = request.json.get('part_id')
     part = db.session.get(Parts, part_id)
     if not part:
         return jsonify({"message": "Part not found"}), 404
-    
     db.session.delete(part)
     db.session.commit()
-    return jsonify({"message": f"Successfully deleted part {part_id}"}), 200
+    return jsonify({"message": f"Part {part_id} deleted successfully"}), 200
 
 #_________________ADD STOCK TO PART______________________
 #take current part stock and add additional stock to it. return a message saying how much stock was added and the new total stock.
-@parts_bp.route('/<int:part_id>/add_stock', methods=['PUT'])
-def add_stock(part_id):
+@parts_bp.route('/add_stock', methods=['PUT'])
+@token_required
+@mechanic_required
+def add_stock():
+    if request.logged_in_role != 'mechanic':
+        return jsonify({'message': 'Access forbidden: Mechanics only'}), 403
+    part_id = request.json.get('part_id')
     part = db.session.get(Parts, part_id)
     if not part:
         return jsonify({"message": "Part not found"}), 404

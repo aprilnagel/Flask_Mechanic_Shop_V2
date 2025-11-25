@@ -6,13 +6,12 @@ from flask import request, jsonify
 
 SECRET_KEY = "supersecretkey"
 
-def encode_token(mechanic_id):
+def encode_token(user_id, role):
     payload = {
         'exp': datetime.now(timezone.utc) + timedelta(days=0, hours=1), # Set token expiration.Token expires in 1 hour
         'iat': datetime.now(timezone.utc),  # Issued at time
-        'sub': str(mechanic_id), #VERY IMPORTANT, SET YOUR USER ID TO A STRING
-        
-        
+        'sub': str(user_id), #VERY IMPORTANT, SET YOUR USER ID TO A STRING
+        'role': role
     }
     token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
     return token
@@ -30,7 +29,8 @@ def token_required(f): #f stands for the function that is getting wrapped. Delet
         try:
             data = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
             print(data)
-            request.logged_in_mechanic_id = data['sub'] #Attach the user id to the request object for use in the route. adding another attribute to the request object called logged_in_user_id
+            request.logged_in_user_id = data['sub'] 
+            request.logged_in_role = data['role']
         except jose.exceptions.ExpiredSignatureError:
             return jsonify({'message': 'Token has expired!'}), 403
         except jose.exceptions.JWTError:
@@ -40,4 +40,18 @@ def token_required(f): #f stands for the function that is getting wrapped. Delet
     
     return decoration
 
-#customer token 
+def mechanic_required(f):
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        if request.logged_in_role != 'mechanic':
+            return jsonify({'message': 'Mechanic access required'}), 403
+        return f(*args, **kwargs)
+    return wrapper
+
+def customer_required(f):
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        if request.logged_in_role != 'customer':
+            return jsonify({'message': 'Customer access required'}), 403
+        return f(*args, **kwargs)
+    return wrapper

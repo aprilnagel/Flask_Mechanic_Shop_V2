@@ -54,7 +54,8 @@ class Service_Tickets(Base):
     price: Mapped[float] = mapped_column(Float, default=0.0, nullable=True)
     status: Mapped[str] = mapped_column(String(50), nullable=False, default="Pending")
     parts: Mapped[str] = mapped_column(String(500), nullable=True)
-    mechanics_ids: Mapped[int] = mapped_column(Integer, ForeignKey("mechanics.id"), nullable=True)
+    completion_date: Mapped[date] = mapped_column(Date, nullable=True)
+
     
     
     #--------RELATIONSHIPS---------
