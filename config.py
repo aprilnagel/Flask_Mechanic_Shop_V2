@@ -5,7 +5,10 @@ class DevelopmentConfig:
   CACHE_DEFAULT_TIMEOUT = 300
   
 class TestingConfig:
-  pass
+  SQLALCHEMY_DATABASE_URI = 'sqlite:///testing.db'#can rename the database anything. Developement makes sense
+  DEBUG = True
+  CACHE_TYPE = "SimpleCache"
+  CACHE_DEFAULT_TIMEOUT = 300
 
 
 class ProductionConfig:

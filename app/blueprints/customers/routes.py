@@ -115,7 +115,7 @@ def update_customer(customer_id):
         return jsonify({"message": "You can only update your own account"}), 403
     #Validate and Deserialize the updates that they are sending in the body of the request
     try:
-        customer_data = customer_schema.load(request.json)
+        customer_data = customer_schema.load(request.json, partial=True) #partial=True allows us to only send some of the fields to update
     except ValidationError as e:
         return jsonify({"message": e.messages}), 400
     # for each of the values that they are sending, we will change the value of the queried object
