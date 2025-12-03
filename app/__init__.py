@@ -8,8 +8,6 @@ from .blueprints.parts import parts_bp
 from flask_swagger_ui import get_swaggerui_blueprint
 
 
-
-
 SWAGGER_URL = '/api/docs'  # URL for exposing Swagger UI (without trailing '/')
 API_URL = '/static/swagger.yaml'  # Our API url (can of course be a local resource)
 

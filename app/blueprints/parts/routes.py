@@ -113,7 +113,7 @@ def add_stock():
     
     part.stock += additional_stock 
     db.session.commit()
-    return jsonify({"message": f"Successfully added {additional_stock} to part {[part_id]}. New stock: {part.stock}"}), 200
+    return jsonify({"message": f"Successfully added {additional_stock} to part {part_id}. New stock: {part.stock}"}), 200
 
     
 

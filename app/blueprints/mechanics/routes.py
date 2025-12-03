@@ -12,40 +12,50 @@ from app.utility.auth import encode_token, mechanic_required, token_required
 
 @mechanics_bp.route('/login', methods=['POST'])
 # @limiter.limit("5 per 10 minutes")
-def login():
-  try:
-    data = login_mechanic_schema.load(request.json)#JSON > Python
-  except ValidationError as err:
-    return jsonify(err.messages), 400 #return the error messages and a 400 status code if validation fails
-  
-  mechanic = db.session.query(Mechanics).where(Mechanics.email == data['email']).first()
-
-  if mechanic and check_password_hash(mechanic.password, data['password']):
-    #create token for customer
-    token = encode_token(mechanic.id, role='mechanic')
-    return jsonify({
-      "message": f"Welcome {mechanic.first_name} {mechanic.last_name}",
-      "token": token,
-    }), 200
+ 
+def login_mechanic():
+    try:
+        data = login_mechanic_schema.load(request.json)
+    except ValidationError as err:
+        return jsonify(err.messages), 400
     
+    mechanic = db.session.query(Mechanics).filter_by(email=data['email']).first()
+    
+    if not mechanic or not check_password_hash(mechanic.password, data['password']):
+        return jsonify({"message": "Invalid email or password"}), 400
+    
+    token = encode_token(mechanic.id, 'mechanic')
+    
+    return jsonify({
+        "message": f"Welcome {mechanic.first_name} {mechanic.last_name}",
+        "token": token
+    }), 200
+
+
     
 #_______________________#CREATE MECHANIC ROUTE________________________
 
 @mechanics_bp.route('', methods=['POST'])
 def create_mechanic():
+    
     try:
         data = mechanic_schema.load(request.json)
     except ValidationError as err:
         return jsonify(err.messages), 400
     
+    existing_mechanic_email = db.session.query(Mechanics).filter_by(email=data['email']).first()
+    if existing_mechanic_email:
+        return jsonify({"message": "Email already exists"}), 400
+    existing_mechanic_phone = db.session.query(Mechanics).filter_by(phone=data['phone']).first()
+    if existing_mechanic_phone:
+        return jsonify({"message": "Phone number already exists"}), 400
     data['password'] = generate_password_hash(data['password'])
-    #create a new mechanic instance
     new_mechanic = Mechanics(**data)
-    
     db.session.add(new_mechanic)
-    
     db.session.commit()
     return mechanic_schema.jsonify(new_mechanic), 201
+
+  
   
 
 #________________________#READ MECHANICS ROUTES________________________

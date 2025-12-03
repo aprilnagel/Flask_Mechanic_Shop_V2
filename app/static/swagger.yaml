@@ -12,6 +12,1334 @@ consumes:
 produces:
   - "application/json" #The API produces JSON responses
 
+securityDefinitions: #Defines the security scheme used in the API and how to add token authentication to endpoints
+  bearerAuth: #name of the security scheme
+    type: apiKey #type of security scheme
+    name: Authorization
+    in: header #where to find the token, in this case in the header of the request
+
 paths: #Information about your API endpoints will go here
 
+  /mechanics/login: #USER INPUT REQUIRED endpoint starts the path
+    post: #request type (post, get, put, delete)
+      tags:
+        - Mechanics #adds this route to a category called Mechanics
+      summary: "Mechanic login. Returns a JWT token upon successful authentication." #info about what this endpoint does
+      description: "Authenticates a mechanic using email and password to receive a JWT token." #more detailed info
+      parameters: #info about the input data. 
+        - in: "body" #where the input data is located
+          name: "body" #name of the input data
+          description: "Mechanic login credentials" #info about the input data
+          required: true #this input data is required
+          schema:
+            $ref: "#/definitions/MechanicLoginCredentials" #references the MechanicLoginCredentials definition below
+      responses: #info about the output data
+        200:
+          description: "Successful login" #info about this response
+          schema:
+            $ref: "#/definitions/MechanicLoginResponse" #references the MechanicLoginResponse definition below
+          examples:
+            application/json:
+              message: "Welcome John Doe"
+              token: "aoj9q9214ntoiancp0qwr925n..."
+        400:
+          description: "Unauthorized - Invalid credentials" #info about this response
+          schema:
+            $ref: "#/definitions/400Response" #references the MechanicLoginResponse definition below
+          examples:
+            application/json:
+              message: "Invalid email or password"
+              token: null
+        
+  /mechanics: #USER INPUT REQUIRED
+    post: #create mechanic route
+      tags:
+        - Mechanics
+      summary: "Create a new mechanic"
+      description: "Registers a new mechanic in the system."
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "Mechanic registration details"
+          required: true
+          schema:
+            $ref: "#/definitions/MechanicCreate"
+      responses:
+        201:
+          description: "Mechanic created successfully"
+          schema:
+            $ref: "#/definitions/MechanicCreateResponse"
+          examples:
+            application/json:
+              id: 1
+              first_name: "John"
+              last_name: "Doe"
+              email: "mechanic@example.com"
+              password: "hashedpassword"
+              phone: "555-555-5555"
+              speciality: "Engine Repair"
+        400:
+          description: "Bad Request - Invalid input data. Can be due to validation errors or duplicate email or phone."
+          schema:
+            $ref: "#/definitions/400Response"
+          examples:
+            application/json:
+              message: "invalid input data or email/phone already exists"
+               
+    get: #get all mechanics route
+      tags:
+        - Mechanics
+      summary: "Get all mechanics"
+      description: "Retrieves a list of all mechanics in the system."
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: "List of mechanics retrieved successfully"
+          schema:
+              $ref: "#/definitions/GetAllMechanicsResponse"
+          examples:
+            application/json:
+              - id: 1
+                first_name: "John"
+                last_name: "Doe"
+                email: "example@gmail.com"
+                phone: "555-555-5555"
+                specialty: "Engine Repair"
+        403:
+          description: "Forbidden - Missing or invalid JWT token."
+          examples:
+            application/json:
+              message: "Missing or invalid token"
+        404:
+          description: "Not Found - No mechanics found in the system."
+          examples:
+            application/json:
+              message: "No mechanics found"
+
+    put: #update mechanic route
+      tags:
+        - Mechanics
+      summary: "Update mechanic details"
+      description: "Updates the details of an existing mechanic. User will be identified via the JWT token."
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "Updated mechanic details"
+          required: true
+          schema:
+            $ref: "#/definitions/MechanicCreate"
+      responses:
+        200:
+          description: "Mechanic updated successfully"
+          schema:
+            $ref: "#/definitions/MechanicCreateResponse"
+        400:
+          description: "Bad Request - Invalid input data."
+        403:
+          description: "Forbidden - Missing or invalid mechanic JWT token."
+        404:
+          description: "Not Found - Mechanic not found."
+
+  /mechanics/{mechanic_id}: #TOKEN REQUIRED delete mechanic route
+    delete:
+      tags:
+        - Mechanics
+      summary: "Delete mechanic account"
+      description: "Deletes the mechanic's account from the system. User will be identified via the JWT token and can only delete their account."
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: "Mechanic deleted successfully"
+          examples:
+            application/json:
+              message: "Mechanic account deleted successfully"
+        403:
+          description: "Forbidden - Missing or invalid mechanic JWT token."
+          schema:
+            $ref: "#/definitions/403MechanicResponse"
+          examples:
+            application/json:
+              message: "Missing or invalid token"
+        404:
+          description: "Not Found - Mechanic not found."
+          schema:
+            $ref: "#/definitions/404MechanicResponse"
+          examples:
+            application/json:
+              message: "Mechanic not found"
+    get:
+      tags:
+        - Mechanics
+      summary: "Get mechanic by ID"
+      description: "Retrieves the details of a specific mechanic by their ID."
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: "mechanic_id"
+          in: "path"
+          description: "ID of the mechanic to retrieve"
+          required: true
+          type: "integer"
+      responses:
+        200:
+          description: "Mechanic details retrieved successfully"
+          schema:
+            $ref: "#/definitions/MechanicCreateResponse"
+        403:
+          description: "Forbidden - Missing or invalid mechanic JWT token."
+          schema:
+            $ref: "#/definitions/403MechanicResponse"
+        404:
+          description: "Not Found - Mechanic not found."
+          schema:
+            $ref: "#/definitions/404MechanicResponse"
+
+  /mechanics/my_tickets: #TOKEN REQUIRED get tickets assigned to logged-in mechanic
+    get:
+      tags:
+        - Mechanics
+      summary: "Get tickets assigned to the logged-in mechanic"
+      description: "Retrieves all tickets assigned to the authenticated mechanic."
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: "List of tickets retrieved successfully"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/definitions/ServiceTicketResponse"
+        403:
+          description: "Forbidden - Missing or invalid mechanic JWT token."
+        404:
+          description: "Not Found - No tickets found for the mechanic."
+
+  /mechanics/logout: #TOKEN REQUIRED mechanic logout route
+    post:
+      tags:
+        - Mechanics
+      summary: "Mechanic logout"
+      description: "Logs out the authenticated mechanic by invalidating their JWT token."
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: "Mechanic logged out successfully"
+          examples:
+            application/json:
+              message: "Successfully logged out"
+        403:
+          description: "Forbidden - Missing or invalid mechanic JWT token."
+          examples:
+            application/json:
+              message: "Missing or invalid token"
+
+  /customers/login: #customer login route for testing mechanic-customer interaction
+    post:
+      tags:
+        - Customers
+      summary: "Customer login. Returns a JWT token upon successful authentication."
+      description: "Authenticates a customer using email and password to receive a JWT token."
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "Customer login credentials"
+          required: true
+          schema:
+            $ref: "#/definitions/CustomerLoginCredentials" 
+      responses:
+        200:
+          description: "Successful login"
+          schema:
+            $ref: "#/definitions/CustomerLoginResponse" 
+          examples:
+            application/json:
+              message: "Welcome Jane Smith"
+              token: "bcd9q9214ntoiancp0qwr925n..."
+        400:
+          description: "Unauthorized - Invalid credentials"
+          schema:
+            $ref: "#/definitions/400Response" 
+          examples:
+            application/json:
+              message: "Invalid email or password"
+              token: null
+
+  /customers:
+    post: #create customer route for testing mechanic-customer interaction
+      tags:
+        - Customers
+      summary: "Create a new customer"
+      description: "Registers a new customer in the system."
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "Customer registration details"
+          required: true
+          schema:
+            $ref: "#/definitions/CustomerCreate"
+      responses:
+        201:
+          description: "Customer created successfully"
+          schema:
+            $ref: "#/definitions/CustomerCreateResponse"
+          examples:
+            application/json:
+              id: 1
+              first_name: "Jane"
+              last_name: "Smith"
+              email: "jane.smith@example.com"
+              phone: "555-555-5555"
+              role: "customer"
+        400:
+          description: "Bad Request - Invalid input data. Can be due to validation errors or duplicate email or phone."
+          schema:
+            $ref: "#/definitions/400Response"
+          examples:
+            application/json:
+              message: "invalid input data or email/phone already exists"
+    
+    get: #get all customers route for testing mechanic-customer interaction
+      tags:
+        - Customers
+      summary: "Get all customers"
+      description: "Retrieves a list of all customers in the system. only accessible to authenticated mechanics."
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: "List of customers retrieved successfully"
+          schema:
+              type: array
+              items:
+                $ref: "#/definitions/CustomerCreateResponse"
+          examples:
+            application/json:
+              - id: 1
+                first_name: "Jane"
+                last_name: "Smith"
+                email: "jane.smith@example.com"
+                phone: "555-555-5555"
+        403:
+          description: "Forbidden - Missing or invalid JWT token."
+          examples:
+            application/json:
+              message: "Missing or invalid token"
+        404:
+          description: "Not Found - No customers found in the system."
+          examples:
+            application/json:
+              message: "No customers found"
+
+    put:
+      tags:
+        - Customers
+      summary: "Update customer details"
+      description: "Updates the details of an existing customer. User will be identified via the JWT token."
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "Updated customer details"
+          required: true
+          schema:
+            $ref: "#/definitions/CustomerCreate"
+      responses:
+        200:
+          description: "Customer updated successfully"
+          schema:
+            $ref: "#/definitions/CustomerCreateResponse"
+        400:
+          description: "Bad Request - Invalid input data."
+          schema:
+            $ref: "#/definitions/400Response"
+        403:
+          description: "Forbidden - Missing or invalid customer JWT token."
+          schema:
+            $ref: "#/definitions/403CustomerResponse"
+        404:
+          description: "Not Found - Customer not found."  
+          schema:
+            $ref: "#/definitions/404CustomerResponse"  
+    
+    delete: #delete customer route for testing mechanic-customer interaction
+      tags:
+        - Customers
+      summary: "Delete customer account"
+      description: "Deletes the customer's account from the system. User will be identified via the JWT token and can only delete their account."
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: "Customer deleted successfully"
+          examples:
+            application/json:
+              message: "Customer account deleted successfully"
+        403:
+          description: "Forbidden - Missing or invalid customer JWT token."
+          schema:
+            $ref: "#/definitions/403CustomerResponse"
+          examples:
+            application/json:
+              message: "Missing or invalid token"
+        404:
+          description: "Not Found - Customer not found."
+          schema:
+            $ref: "#/definitions/404CustomerResponse"
+          examples:
+            application/json:
+              message: "Customer not found"
+
+  /customers/my_tickets: #TOKEN REQUIRED get tickets created by logged-in customer
+    get:
+      tags:
+        - Customers
+      summary: "Get tickets assigned by the logged-in customer"
+      description: "Retrieves all tickets created by the authenticated customer."
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: "List of tickets retrieved successfully"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/definitions/ServiceTicketResponse"
+        403:
+          description: "Forbidden - Missing or invalid customer JWT token."
+          schema:
+            $ref: "#/definitions/403CustomerResponse"
+        404:
+          description: "Not Found - No tickets found for the customer." 
+          schema:
+            $ref: "#/definitions/404CustomerResponse"            
+
+  /customers/logout: #TOKEN REQUIRED customer logout route
+    post:
+      tags:
+        - Customers
+      summary: "Customer logout"
+      description: "Logs out the authenticated customer by invalidating their JWT token."
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: "Customer logged out successfully"
+          examples:
+            application/json:
+              message: "Successfully logged out"
+        403:
+          description: "Forbidden - Missing or invalid customer JWT token."
+          examples:
+            application/json:
+              message: "Missing or invalid token"
+
+  /service_tickets: #TOKEN REQUIRED create service ticket route
+    post:
+      tags:
+        - Service Tickets
+      summary: "Create a new service ticket"
+      description: "Creates a new service ticket in the system. User will be identified via the JWT token."
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "Service ticket details"
+          required: true
+          schema:
+            $ref: "#/definitions/ServiceTicketCreate"
+      examples:
+        application/json:
+          vehicle_make: "Toyota"
+          vehicle_model: "Camry"
+          vehicle_year: 2020
+          service_description: "Oil change and tire rotation"
+          customer_id: 1
+      responses:
+        201:
+          description: "Service ticket updated successfully"
+          schema:
+            $ref: "#/definitions/ServiceTicketResponse"
+        400:
+          description: "Bad Request - Invalid input data."
+          schema:
+            $ref: "#/definitions/400Response"
+        403:
+          description: "Forbidden - Missing or invalid mechanic JWT token."
+          schema:
+            $ref: "#/definitions/403MechanicResponse"
+
+    get: #get all service tickets
+      tags:
+        - Service Tickets
+      summary: "Get all service tickets"
+      description: "Retrieves a list of all service tickets in the system. only accessible to authenticated mechanics."
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: "List of service tickets retrieved successfully"
+          schema:
+              type: array
+              items:
+                $ref: "#/definitions/ServiceTicketResponse"
+          examples:
+            application/json:
+              - id: 1
+                vehicle_make: "Toyota"
+                vehicle_model: "Camry"
+                vehicle_year: 2020
+                service_description: "Oil change and tire rotation"
+                date_created: "2023-10-01T12:34:56Z"
+                price: null
+                status: "Pending"
+                parts: "Oil filter (x2), tires (x4)"
+                mechanic_id: null
+                customer_id: 1
+        403:
+          description: "Forbidden - Missing or invalid mechanic JWT token."
+          schema:
+            $ref: "#/definitions/403MechanicResponse"
+          examples:
+            application/json:
+              message: "Missing or invalid token"
+        404:
+          description: "Not Found - No service tickets found in the system."
+          schema:
+            $ref: "#/definitions/404MechanicResponse"
+          examples:
+            application/json:
+              message: "No service tickets found"
+    put: 
+      tags:
+        - Service Tickets
+      summary: "Update service ticket details"
+      description: "Updates the details of an existing service ticket. User will be identified via the JWT token."
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "Updated service ticket details"
+          required: true
+          schema:
+            $ref: "#/definitions/ServiceTicketUpdate"
+      responses:
+        200:
+          description: "Service ticket updated successfully"
+          schema:
+            $ref: "#/definitions/ServiceTicketResponse"
+        400:
+          description: "Bad Request - Invalid input data."
+          schema:
+            $ref: "#/definitions/400Response"
+        403:
+          description: "Forbidden - Missing or invalid mechanic JWT token."
+          schema:
+            $ref: "#/definitions/403MechanicResponse"
+        404:
+          description: "Not Found - Service ticket not found."  
+          schema:
+            $ref: "#/definitions/404MechanicResponse"
+
+  /service_tickets/{service_ticket_id}: #TOKEN REQUIRED get, update, delete service ticket by ID
+    get:
+      tags:
+        - Service Tickets
+      summary: "Get service ticket by ID"
+      description: "Retrieves the details of a specific service ticket by its ID."
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: "service_ticket_id"
+          in: "path"
+          description: "ID of the service ticket to retrieve"
+          required: true
+          type: "integer"
+          
+      responses:
+        200:
+          description: "Service ticket details retrieved successfully"
+          schema:
+            $ref: "#/definitions/ServiceTicketResponse"
+        403:
+          description: "Forbidden - Missing or invalid JWT token."
+          schema:
+            $ref: "#/definitions/403MechanicResponse"
+        404:
+          description: "Not Found - Service ticket not found."
+          schema:
+            $ref: "#/definitions/404MechanicResponse"
+
+  /service_tickets/assign_mechanic: #TOKEN REQUIRED assign mechanic to service ticket
+    post:
+      tags:
+        - Service Tickets
+      summary: "Assign mechanic to service ticket"
+      description: "Assigns a mechanic to a specific service ticket. User will be identified via the JWT token."
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "Assign Mechanic to a service ticket"
+          required: true
+          schema:
+            $ref: "#/definitions/ServiceTicketAssign"
+          examples:
+            application/json:
+              service_ticket_id: 1
+              mechanic_id: 2
+      responses:
+        200:
+          description: "Mechanic assigned to service ticket successfully"
+          schema:
+            $ref: "#/definitions/ServiceTicketResponse"
+          examples:
+            application/json:
+              message: "Mechanic {first_name} {last_name} assigned to service ticket {service_ticket_id}. Status set to 'In Progress'."
+              id: 1
+              vehicle_make: "Toyota"
+              vehicle_model: "Camry"
+              vehicle_year: 2020
+              service_description: "Oil change and tire rotation"
+              date_created: "2023-10-01T12:34:56Z"
+              price: null
+              status: "Pending"
+              parts: "Oil filter (x2), tires (x4)"
+              mechanic_id: 2
+              customer_id: 1
+        400:
+          description: "Bad Request - Invalid input data."
+          schema:
+            $ref: "#/definitions/400Response"
+        403:
+          description: "Forbidden - Missing or invalid mechanic JWT token."
+          schema:
+            $ref: "#/definitions/403MechanicResponse"
+        404:
+          description: "Not Found - Service ticket or mechanic not found."  
+          schema:
+            $ref: "#/definitions/404MechanicResponse"  
+
+  /service_tickets/remove_mechanic: #TOKEN REQUIRED remove mechanic from service ticket
+    post:
+      tags:
+        - Service Tickets
+      summary: "Remove mechanic from service ticket"
+      description: "Removes the assigned mechanic from a specific service ticket. User will be identified via the JWT token."
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "Remove Mechanic from a service ticket"
+          required: true
+          schema:
+            $ref: "#/definitions/ServiceTicketAssign"
+      responses:
+        200:
+          description: "Mechanic removed from service ticket successfully"
+          schema:
+            $ref: "#/definitions/ServiceTicketResponse"
+          examples:
+            application/json:
+              message: "Mechanic {mechanic.id}, {mechanic.first_name} {mechanic.last_name} removed from Service Ticket {service_ticket.id}.Current status: {service_ticket.status}."
+              id: 1
+              vehicle_make: "Toyota"
+              vehicle_model: "Camry"
+              vehicle_year: 2020
+              service_description: "Oil change and tire rotation"
+              date_created: "2023-10-01T12:34:56Z"
+              price: null
+              status: "Pending"
+              parts: "Oil filter (x2), tires (x4)"
+              mechanic_id: null
+              customer_id: 1
+
+        400:
+          description: "Bad Request - Invalid input data."
+          schema:
+            $ref: "#/definitions/400Response"
+        403:
+          description: "Forbidden - Missing or invalid mechanic JWT token."
+          schema:
+            $ref: "#/definitions/403MechanicResponse"
+        404:
+          description: "Not Found - Service ticket or mechanic not found."  
+          schema:
+            $ref: "#/definitions/404MechanicResponse"
+  
+  /service_tickets/add_part: #TOKEN REQUIRED add part to service ticket
+    put:
+      tags:
+        - Service Tickets
+      summary: "Add part to service ticket"
+      description: "Adds a part to a specific service ticket. User will be identified via the JWT token."
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "Add part to a service ticket"
+          required: true
+          schema:
+            $ref: "#/definitions/ServiceTicketAdd-removePart"
+      responses:
+        200:
+          description: "Part added to service ticket successfully"
+          schema:
+            $ref: "#/definitions/ServiceTicketResponse"
+          examples:
+            application/json:
+              message: "Added {quantity} of part {part.part_name} to Service Ticket {service_ticket.id}."
+              id: 1
+              vehicle_make: "Toyota"
+              vehicle_model: "Camry"
+              vehicle_year: 2020
+              service_description: "Oil change and tire rotation"
+              date_created: "2023-10-01T12:34:56Z"
+              price: 99.99
+              status: "Pending"
+              parts: "Oil filter (x2), tires (x4), {part.name} (x{quantity})"
+              mechanic_id: null
+              customer_id: 1
+        400:
+          description: "Bad Request - Invalid input data."
+          schema:
+            $ref: "#/definitions/400Response"
+        403:
+          description: "Forbidden - Missing or invalid mechanic JWT token."
+          schema:
+            $ref: "#/definitions/403MechanicResponse"
+        404:
+          description: "Not Found - Service ticket or part not found."  
+          schema:
+            $ref: "#/definitions/404MechanicResponse"
+
+  /service_tickets/remove_part: #TOKEN REQUIRED remove part from service ticket
+    put:
+      tags:
+        - Service Tickets
+      summary: "Remove part from service ticket"
+      description: "Removes a part from a specific service ticket. User will be identified via the JWT token."
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "Remove part from a service ticket"
+          required: true
+          schema:
+            $ref: "#/definitions/ServiceTicketAdd-removePart"
+      responses:
+        200:
+          description: "Part removed from service ticket successfully"
+          schema:
+            $ref: "#/definitions/ServiceTicketResponse"
+          examples:
+            application/json:
+              message: "Removed {quantity} of part {part.part_name} from Service Ticket {service_ticket.id}."
+              id: 1
+              vehicle_make: "Toyota"
+              vehicle_model: "Camry"
+              vehicle_year: 2020
+              service_description: "Oil change and tire rotation"
+              date_created: "2023-10-01T12:34:56Z"
+              price: 79.99
+              status: "Pending"
+              parts: "Oil filter (x2), tires (x4)"
+              mechanic_id: null
+              customer_id: 1
+        400:
+          description: "Bad Request - Invalid input data."
+          schema:
+            $ref: "#/definitions/400Response"
+        403:
+          description: "Forbidden - Missing or invalid mechanic JWT token."
+          schema:
+            $ref: "#/definitions/403MechanicResponse"
+        404:
+          description: "Not Found - Service ticket or part not found."  
+          schema:
+            $ref: "#/definitions/404MechanicResponse"
+
+  /parts:
+    post: #TOKEN REQUIRED create part route
+      tags:
+        - Parts
+      summary: "Create a new part"
+      description: "Creates a new part in the system. User will be identified via mechanic JWT token."
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "Part details"
+          required: true
+          schema:
+            $ref: "#/definitions/PartCreate"
+          examples:
+            application/json:
+              part_name: "Brake Pad"
+              price: 49.99
+              stock: 100
+      responses:
+        201:
+          description: "Part created successfully"
+          schema:
+            $ref: "#/definitions/PartResponse"
+        400:
+          description: "Bad Request - Invalid input data."
+          schema:
+            $ref: "#/definitions/400Response"
+        403:
+          description: "Forbidden - Missing or invalid mechanic JWT token."
+          schema:
+            $ref: "#/definitions/403MechanicResponse"
+    get: #get all parts
+      tags:
+        - Parts
+      summary: "Get all parts"
+      description: "Retrieves a list of all parts in the system. only accessible to authenticated mechanics."
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: "List of parts retrieved successfully"
+          schema:
+              type: array
+              items:
+                $ref: "#/definitions/PartResponse"
+          examples:
+            application/json:
+              - id: 1
+                part_name: "Brake Pad"
+                price: 49.99
+                stock: 100
+        403:
+          description: "Forbidden - Missing or invalid mechanic JWT token."
+          schema:
+            $ref: "#/definitions/403MechanicResponse"
+          examples:
+            application/json:
+              message: "Missing or invalid token"
+        404:
+          description: "Not Found - No parts found in the system."
+          schema:
+            $ref: "#/definitions/404MechanicResponse"
+          examples:
+            application/json:
+              message: "No parts found"
+
+    delete: #TOKEN REQUIRED
+      tags:
+        - Parts
+      summary: "Delete part"
+      description: "Deletes a part from the system. User will be identified via the JWT token."
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "Part ID to delete"
+          required: true
+          schema:
+            type: object
+            properties:
+              part_id:
+                type: integer
+            required:
+              - part_id
+      responses:
+        200:
+          description: "Part deleted successfully"
+          examples:
+            application/json:
+              message: "Part {part_id} deleted successfully"
+        400:
+          description: "Bad Request - Invalid input data."
+          schema:
+            $ref: "#/definitions/400Response"
+        403:
+          description: "Forbidden - Missing or invalid mechanic JWT token."
+          schema:
+            $ref: "#/definitions/403MechanicResponse"
+        404:
+          description: "Not Found - Part not found."  
+          schema:
+            $ref: "#/definitions/404MechanicResponse"
+  /parts/{part_id}: #TOKEN REQUIRED get, update, delete part by ID
+    get:
+      tags:
+        - Parts
+      summary: "Get part by ID"
+      description: "Retrieves the details of a specific part by its ID."
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: "part_id"
+          in: "path"
+          description: "ID of the part to retrieve"
+          required: true
+          type: "integer"
+      responses:
+        200:
+          description: "Part details retrieved successfully"
+          schema:
+            $ref: "#/definitions/PartResponse"
+        403:
+          description: "Forbidden - Missing or invalid JWT token."
+          schema:
+            $ref: "#/definitions/403MechanicResponse"
+        404:
+          description: "Not Found - Part not found."
+          schema:
+            $ref: "#/definitions/404MechanicResponse"
+    put: #update part
+      tags:
+        - Parts
+      summary: "Update part details"
+      description: "Updates the details of an existing part. User will be identified via mechanic JWT token."
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "Updated part details"
+          required: true
+          schema:
+            $ref: "#/definitions/PartCreate"
+      responses:
+        200:
+          description: "Part updated successfully"
+          schema:
+            $ref: "#/definitions/PartResponse"
+        400:
+          description: "Bad Request - Invalid input data."
+          schema:
+            $ref: "#/definitions/400Response"
+        403:
+          description: "Forbidden - Missing or invalid mechanic JWT token."
+          schema:
+            $ref: "#/definitions/403MechanicResponse"
+        404:
+          description: "Not Found - Part not found."  
+          schema:
+            $ref: "#/definitions/404MechanicResponse"
+  parts/add_stock: #TOKEN REQUIRED
+    put:
+      tags:
+        - Parts
+      summary: "Add stock to part"
+      description: "Adds stock to a specific part. User will be identified via the JWT token."
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "Add stock to a part"
+          required: true
+          schema:
+            type: object
+            properties:
+              part_id:
+                type: integer
+              additional_stock:
+                type: integer
+            required:
+              - part_id
+              - additional_stock
+      responses:
+        200:
+          description: "Stock added to part successfully"
+          schema:
+            $ref: "#/definitions/PartResponse"
+          examples:
+            application/json:
+              message: "Successfully added {additional_stock} to part {part_id}. New stock: {part.stock}."
+              id: 1
+              part_name: "Brake Pad"
+              price: 49.99
+              stock: 150
+        400:
+          description: "Bad Request - Invalid input data."
+          schema:
+            $ref: "#/definitions/400Response"
+        403:
+          description: "Forbidden - Missing or invalid mechanic JWT token."
+          schema:
+            $ref: "#/definitions/403MechanicResponse"
+        404:
+          description: "Not Found - Part not found."  
+          schema:
+            $ref: "#/definitions/404MechanicResponse"
 definitions: ##Information about the shape of input and output json
+  
+  MechanicLoginCredentials: #input data for login routes
+    type: object
+    properties:
+      email:
+        type: string
+        example: "user@example.com"
+      password:
+        type: string
+        example: "securepassword"
+
+    required:
+      - email
+      - password
+  
+  MechanicLoginResponse: #output data for login routes
+    type: object
+    properties:
+      message:
+        type: string
+      token:
+        type: string
+  
+  MechanicCreate: #input data for create mechanic route
+    type: object
+    properties:
+      first_name:
+        type: string
+        example: "John"
+      last_name:
+        type: string
+        example: "Doe"
+      password:
+        type: string
+        example: "securepassword"
+      email:
+        type: string
+        example: "mechanic@example.com"
+      phone:
+        type: string
+        example: "555-555-5555"
+      specialty:
+        type: string
+        example: "Engine Repair" 
+    required:
+      - first_name
+      - last_name
+      - password
+      - email
+      - phone
+      - specialty
+      
+  MechanicCreateResponse: #output data for create mechanic route
+    type: object
+    properties:
+      id:
+        type: integer
+      first_name:
+        type: string
+      last_name:
+        type: string
+      email:
+        type: string
+      phone:
+        type: string
+      specialty:
+        type: string
+        example: "Engine Repair" 
+      role:
+        type: string
+        example: "mechanic"
+  
+  GetAllMechanicsResponse:
+    type: array
+    items:
+      type: object
+      properties:
+        id:
+          type: integer
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        specialty:
+          type: string
+
+  CustomerLoginCredentials: #input data for login routes
+    type: object
+    properties:
+      email:
+        type: string
+        example: "user@example.com"
+      password:
+        type: string
+        example: "securepassword"
+  
+  CustomerLoginResponse: #output data for login routes
+    type: object
+    properties:
+      message:
+        type: string
+      token:
+        type: string
+
+  CustomerCreate: #input data for create customer route
+    type: object
+    properties:
+      first_name:
+        type: string
+        example: "John"
+      last_name:
+        type: string
+        example: "Doe"
+      password:
+        type: string
+        example: "securepassword"
+      email:
+        type: string
+        example: "mechanic@example.com"
+      phone:
+        type: string
+        example: "555-555-5555"
+    required:
+      - first_name
+      - last_name
+      - password
+      - email
+      - phone
+  
+  CustomerCreateResponse: #output data for create customer route
+    type: object
+    properties:
+      id:
+        type: integer
+      first_name:
+        type: string
+      last_name:
+        type: string
+      email:
+        type: string
+      phone:
+        type: string
+      role:
+        type: string
+        example: "customer"
+
+  ServiceTicketCreate: #input data for create service ticket route
+    type: object
+    properties:
+      vehicle_make:
+        type: string
+        example: "Toyota"
+      vehicle_model:
+        type: string
+        example: "Camry"
+      vehicle_year:
+        type: integer
+        example: 2020
+      service_description:
+        type: string
+        example: "Oil change and tire rotation"
+      customer_id:
+        type: integer
+        example: 1
+    required:
+      - vehicle_make
+      - vehicle_model
+      - vehicle_year
+      - service_description
+      - customer_id 
+
+  ServiceTicketResponse:
+    type: array
+    items:
+      type: object
+      properties:
+        id:
+          type: integer
+        vehicle_make:
+          type: string
+        vehicle_model:
+          type: string
+        vehicle_year:
+          type: integer
+        service_description:
+          type: string
+        date_created:
+          type: string
+          format: date-time
+        price:
+          type: number
+          format: float
+        status:
+          type: string
+        parts:
+          type: string
+        mechanic_id: #null until assigned
+          type: integer
+        customer_id:
+          type: integer
+
+  ServiceTicketUpdate:
+    type: object
+    properties:
+      vehicle_make:
+        type: string
+        example: "Toyota"
+      vehicle_model:
+        type: string
+        example: "Camry"
+      vehicle_year:
+        type: integer
+        example: 2020
+      service_description:
+        type: string
+        example: "Oil change and tire rotation"
+      price:
+        type: number
+        format: float
+        example: 99.99
+      status:
+        type: string
+        example: "In Progress"
+      parts:
+        type: string
+        example: "Oil filter (x2), tires (x4)"
+      mechanic_id:
+        type: integer
+        example: 1
+      customer_id:
+        type: integer
+        example: 1
+      service_ticket_id:
+        type: integer
+        example: 1
+      completion_date:
+        type: string
+        format: date-time
+        example: "2023-10-05T15:30:00Z"
+      
+    required:
+      - vehicle_make
+      - vehicle_model
+      - vehicle_year
+      - service_description
+      - customer_id
+      - service_ticket_id
+
+  ServiceTicketAssign:
+    type: object
+    properties:
+      service_ticket_id:
+        type: integer
+        example: 1
+      mechanic_id:
+        type: integer
+        example: 2
+    required:
+      - service_ticket_id
+      - mechanic_id
+  
+  ServiceTicketAdd-removePart:
+    type: object
+    properties:
+      service_ticket_id:
+        type: integer
+        example: 1
+      part_id:
+        type: integer
+        example: 3
+      quantity:
+        type: integer
+        example: 2
+    required:
+      - service_ticket_id
+      - part_id
+      - quantity
+  
+  PartCreate:
+    type: object
+    properties:
+      part_name:
+        type: string
+        example: "Brake Pad"
+      price:
+        type: number
+        format: float
+        example: 49.99
+      stock:
+        type: integer
+        example: 100
+    required:
+      - part_name
+      - price
+      - stock
+  
+  PartResponse:
+    type: object
+    properties:
+      id:
+        type: integer
+      part_name:
+        type: string
+      price:
+        type: number
+        format: float
+      stock:
+        type: integer
+
+  400Response: #generic 400 response
+    type: object
+    properties:
+      message:
+        type: string
+        example: "invalid input data or email/phone already exists"
+
+  403MechanicResponse: #generic 403 response 
+    type: object
+    properties:
+      message:
+        type: string
+        example: "Missing or invalid token"
+
+  403CustomerResponse: #generic 403 response 
+    type: object
+    properties:
+      message:
+        type: string
+        example: "Missing or invalid token"
+
+  404MechanicResponse: #generic 404 response
+    type: object
+    properties:
+      message:
+        type: string
+        example: "Mechanic not found"
+  
+  404CustomerResponse: #generic 404 response
+    type: object
+    properties:
+      message:
+        type: string
+        example: "Customer not found"
+  
+  Components:
+    securitySchemes:
+      Bearer:
+        type: http
+        scheme: bearer
+        bearerFormat: JWT
+
+        
+
+  
