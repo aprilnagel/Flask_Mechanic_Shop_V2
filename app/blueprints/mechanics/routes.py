@@ -75,6 +75,8 @@ def get_mechanics():
 #________________________#READ A MECHANIC ROUTE________________________
 
 @mechanics_bp.route('/<int:mechanic_id>', methods=['GET'])
+@token_required
+@mechanic_required
 def get_mechanic(mechanic_id):
     mechanic = db.session.get(Mechanics, mechanic_id)
     if request.logged_in_role != 'mechanic':
