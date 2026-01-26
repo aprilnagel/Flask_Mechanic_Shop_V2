@@ -1,3 +1,5 @@
+import os
+
 class DevelopmentConfig:
   SQLALCHEMY_DATABASE_URI = 'sqlite:///Bagel_Repairs.db'#can rename the database anything. Developement makes sense
   DEBUG = True
@@ -12,4 +14,5 @@ class TestingConfig:
 
 
 class ProductionConfig:
-    pass
+    SQLALCHEMY_DATABASE_URI = os.environ.get('SQLALCHEMY_DATABASE_URI') or 'sqlite:///app.db' #pulling from .env file
+    CACHE_TYPE = "SimpleCache"
