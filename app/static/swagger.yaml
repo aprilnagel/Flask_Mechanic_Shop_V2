@@ -4,9 +4,9 @@ info:
   description: "API documentation for Bagel's Repair Shop"
   version: "0.0.1"
 
-host: "127.0.0.1:5000" # Update with your server's host and port. It's in development right now
+host: "bagels-mechanic-shop.onrender.com" # Update with your server's host and port. It's in development right now
 schemes:
-  - "http"
+  - "https"
 consumes:
   - "application/json" #The API consumes JSON requests
 produces:
