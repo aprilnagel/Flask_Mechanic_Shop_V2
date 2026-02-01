@@ -1,20 +1,53 @@
-import { useContext } from "react";
-import { AuthContext } from "../contexts/Auth";
+import { useAuth } from "../contexts/Auth";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 
 export default function Profile() {
-  const { mechanic } = useContext(AuthContext);
+  const { mechanic, logout } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   if (!mechanic) {
-    return <p>No mechanic is logged in.</p>;
+    return (
+      <div>
+        <p style={{ color: "red" }}>You are not logged in.</p>
+        <Link to="/login">Go to Login</Link>
+      </div>
+    );
   }
 
   return (
     <div>
+      {location.state?.success && (
+        <p style={{ color: "green" }}>{location.state.success}</p>
+      )}
+
       <h2>Mechanic Profile</h2>
-      <p>Welcome {mechanic.first_name} {mechanic.last_name}!</p>
+      <p>
+        Welcome {mechanic.first_name} {mechanic.last_name}!
+      </p>
       <p>Email: {mechanic.email}</p>
       <p>Phone: {mechanic.phone}</p>
-      <p>Specialty: {mechanic.specialty}</p>      
+      <p>Specialty: {mechanic.specialty}</p>
+
+      <hr />
+
+      <button onClick={() => navigate("/update")}>Update Profile</button>
+
+      <button onClick={() => navigate("/my_tickets")}>View My Tickets</button>
+
+      <button onClick={() => navigate("/tickets")}>View All Tickets</button>
+
+      <button onClick={() => navigate("/customers/new")}>New Customer Form</button>
+
+      <button onClick={() => navigate("/tickets/new")}>
+        Create New Ticket
+      </button>
+
+
+
+      <button onClick={logout} style={{ color: "red" }}>
+        Logout
+      </button>
     </div>
   );
 }

@@ -35,7 +35,6 @@ def create_service_ticket():
 @service_tickets_bp.route('', methods=['GET'])
 @token_required
 @mechanic_required
-@cache.cached(timeout=30)
 def get_service_tickets():
     service_tickets = db.session.query(Service_Tickets).all()
     return service_tickets_schema.jsonify(service_tickets), 200
