@@ -11,9 +11,8 @@ export default function Profile() {
   return (
     <div>
       <h2>Mechanic Profile</h2>
-      <p><strong>ID:</strong> {mechanic.id}</p>
-      <p><strong>Name:</strong> {mechanic.name}</p>
-      <p><strong>Email:</strong> {mechanic.email}</p>
+      <p>Welcome {mechanic.first_name} {mechanic.last_name}!</p>
+      
     </div>
   );
 }

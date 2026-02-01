@@ -28,7 +28,7 @@ def login_mechanic():
     token = encode_token(mechanic.id, 'mechanic')
     
     return jsonify({
-        "message": f"Welcome {mechanic.first_name} {mechanic.last_name}",
+        "message": f"Welcome {mechanic.first_name} {mechanic.last_name}!",
         "token": token,
         "mechanic": {
             "id": mechanic.id,
@@ -37,8 +37,7 @@ def login_mechanic():
             "email": mechanic.email,
             "phone": mechanic.phone,
             "specialty": mechanic.specialty
-
-
+            
         }
     }), 200
 
@@ -54,16 +53,29 @@ def create_mechanic():
         return jsonify(err.messages), 400
     
     existing_mechanic_email = db.session.query(Mechanics).filter_by(email=data['email']).first()
+    
     if existing_mechanic_email:
         return jsonify({"message": "Email already exists"}), 400
+    
     existing_mechanic_phone = db.session.query(Mechanics).filter_by(phone=data['phone']).first()
+    
     if existing_mechanic_phone:
         return jsonify({"message": "Phone number already exists"}), 400
+    
     data['password'] = generate_password_hash(data['password'])
     new_mechanic = Mechanics(**data)
     db.session.add(new_mechanic)
     db.session.commit()
-    return mechanic_schema.jsonify(new_mechanic), 201
+    
+    return jsonify({
+        "id": new_mechanic.id,
+        "first_name": new_mechanic.first_name,
+        "last_name": new_mechanic.last_name,
+        "email": new_mechanic.email,
+        "phone": new_mechanic.phone,
+        "specialty": new_mechanic.specialty
+    }), 201
+
 
   
   
