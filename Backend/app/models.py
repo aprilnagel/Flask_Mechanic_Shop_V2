@@ -80,7 +80,7 @@ class Mechanics(Base):
     specialty: Mapped[str] = mapped_column(String(200), nullable=False)
     phone: Mapped[str] = mapped_column(String(20), nullable=False, unique=True)
     email: Mapped[str] = mapped_column(String(250), nullable=False, unique=True)
-    password: Mapped[str] = mapped_column(String(128), nullable=False)
+    password: Mapped[str] = mapped_column(String(500), nullable=False)
     role: Mapped[str] = mapped_column(String(50), nullable=False, default="mechanic")
     
     #--------RELATIONSHIPS---------
