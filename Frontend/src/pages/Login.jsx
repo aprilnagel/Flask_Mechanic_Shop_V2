@@ -39,6 +39,8 @@ export default function Login() {
         setError(data.message || "Login failed");
         return;
       }
+      // Save token
+      localStorage.setItem("token", data.token);
 
       // Save mechanic to global context
       setMechanic(data.mechanic);

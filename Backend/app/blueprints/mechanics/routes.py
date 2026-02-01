@@ -172,9 +172,22 @@ def get_my_tickets():
         return jsonify({"message": "No tickets found for this mechanic"}), 404
     return service_tickets_schema.jsonify(tickets), 200
   
+#____________________GET MY PROFILE ROUTE____________________
+@mechanics_bp.route('/me', methods=['GET'])
+@token_required
+def get_current_mechanic():
+    mechanic_id = request.logged_in_user_id
+    mechanic = db.session.get(Mechanics, mechanic_id)
+
+    if not mechanic:
+        return jsonify({"message": "Mechanic not found"}), 404
+
+    return mechanic_schema.jsonify(mechanic), 200
+
   
 #____________________LOGOUT ROUTE (for token-based auth, this is typically handled on the client side)____________________
 @mechanics_bp.route('/logout', methods=['POST'])
 @token_required
 def logout():
     return jsonify({"message": "Logout successful"}), 200
+
