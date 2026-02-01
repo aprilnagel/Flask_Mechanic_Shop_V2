@@ -4,7 +4,6 @@ from app.models import Mechanics
 class MechanicSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Mechanics
-        load_instance = True
         role = ma.auto_field(load_default="mechanic")
 
 mechanic_schema = MechanicSchema()
