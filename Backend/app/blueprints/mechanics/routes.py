@@ -1,7 +1,6 @@
 import token
 from app.blueprints.mechanics import mechanics_bp
 from .schemas import mechanic_schema, mechanics_schema, login_mechanic_schema
-from app.blueprints.Service_Tickets.schemas import service_tickets_schema
 from flask import request, jsonify
 from marshmallow import ValidationError
 from app.models import db, Mechanics
@@ -159,6 +158,7 @@ def update_mechanic():
 @token_required
 @mechanic_required
 def get_my_tickets():
+    from app.blueprints.Service_Tickets.schemas import service_tickets_schema   
     mechanic_id = request.logged_in_user_id #Get the mechanic ID from the token
     mechanic = db.session.get(Mechanics, mechanic_id) #Query for the mechanic
     if not mechanic:

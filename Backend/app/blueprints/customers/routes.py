@@ -1,6 +1,5 @@
 from app.blueprints.customers import customers_bp
 from .schemas import customer_schema, customers_schema, login_customer_schema
-from app.blueprints.Service_Tickets.schemas import service_tickets_schema
 from app.utility.auth import customer_required, encode_token, mechanic_required, token_required
 from flask import request, jsonify
 from marshmallow import ValidationError
@@ -133,6 +132,7 @@ def update_customer(customer_id):
 @token_required
 @customer_required
 def get_my_tickets():
+    from app.blueprints.Service_Tickets.schemas import service_tickets_schema
     customer_id = request.logged_in_user_id #Get the customer ID from the token
     customer = db.session.get(Customers, customer_id) #Query for the customer
     if not customer:
