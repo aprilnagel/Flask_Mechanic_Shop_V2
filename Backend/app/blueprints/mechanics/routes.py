@@ -79,10 +79,6 @@ def create_mechanic():
     }), 201
 
 
-
-  
-  
-
 #________________________#READ MECHANICS ROUTES________________________
 
 @mechanics_bp.route('', methods=['GET'])
