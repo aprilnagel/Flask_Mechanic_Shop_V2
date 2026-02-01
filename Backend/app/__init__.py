@@ -27,6 +27,10 @@ def create_app(config_name):
     limiter.init_app(app)
     cache.init_app(app)
     
+    with app.app_context():
+        db.create_all()
+
+    
     #Register Blueprints
     app.register_blueprint(customers_bp, url_prefix='/customers')
     app.register_blueprint(mechanics_bp, url_prefix='/mechanics')
