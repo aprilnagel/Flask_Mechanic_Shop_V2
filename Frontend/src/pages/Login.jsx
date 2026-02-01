@@ -31,6 +31,9 @@ export default function Login() {
       });
 
       const data = await res.json();
+      console.log("FULL RESPONSE FROM BACKEND:", data);
+
+
 
       if (!res.ok) {
         setError(data.message || "Login failed");
@@ -49,6 +52,8 @@ export default function Login() {
       console.error(err);
     }
   };
+  console.log("Using API:", API_BASE_URL);
+
 
   return (
   <form onSubmit={handleSubmit}>

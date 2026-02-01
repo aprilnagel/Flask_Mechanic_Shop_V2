@@ -1,3 +1,4 @@
+import token
 from app.blueprints.mechanics import mechanics_bp
 from .schemas import mechanic_schema, mechanics_schema, login_mechanic_schema
 from app.blueprints.Service_Tickets.schemas import service_tickets_schema
@@ -28,9 +29,16 @@ def login_mechanic():
     
     return jsonify({
         "message": f"Welcome {mechanic.first_name} {mechanic.last_name}",
-        "token": token
+        "token": token,
+        "mechanic": {
+            "id": mechanic.id,
+            "first_name": mechanic.first_name,
+            "last_name": mechanic.last_name,
+            "email": mechanic.email,
+            "phone": mechanic.phone,
+            "speciality": mechanic.speciality
+        }
     }), 200
-
 
     
 #_______________________#CREATE MECHANIC ROUTE________________________
