@@ -44,8 +44,7 @@ export default function Login() {
       setMechanic(data.mechanic);
 
       // Redirect AFTER successful login
-      navigate("/profile");
-
+      navigate("/me");
       console.log("Logged in:", data.mechanic);
     } catch (err) {
       setError("Server error — try again later");

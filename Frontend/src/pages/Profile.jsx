@@ -12,7 +12,9 @@ export default function Profile() {
     <div>
       <h2>Mechanic Profile</h2>
       <p>Welcome {mechanic.first_name} {mechanic.last_name}!</p>
-      
+      <p>Email: {mechanic.email}</p>
+      <p>Phone: {mechanic.phone}</p>
+      <p>Specialty: {mechanic.specialty}</p>      
     </div>
   );
 }
