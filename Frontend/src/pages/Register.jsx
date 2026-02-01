@@ -8,7 +8,7 @@ export default function Register() {
     phone: "",
     specialty: "",
     email: "",
-    password: ""
+    password: "",
   });
 
   const handleChange = (e) => {
@@ -22,7 +22,7 @@ export default function Register() {
       const res = await fetch(`${API_BASE_URL}/mechanics`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form)
+        body: JSON.stringify(form),
       });
 
       const data = await res.json();
@@ -50,14 +50,13 @@ export default function Register() {
         onChange={handleChange}
       />
 
-      
       <input
         name="specialty"
         placeholder="Specialty"
         value={form.specialty}
         onChange={handleChange}
       />
-      
+
       <input
         name="phone"
         placeholder="Phone"
@@ -65,7 +64,6 @@ export default function Register() {
         onChange={handleChange}
       />
 
-      
       <input
         name="email"
         placeholder="Email"

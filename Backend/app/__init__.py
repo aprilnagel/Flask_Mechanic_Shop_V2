@@ -29,6 +29,8 @@ def create_app(config_name):
     
     with app.app_context():
         db.create_all()
+        
+    print("USING DATABASE:", app.config["SQLALCHEMY_DATABASE_URI"])
 
     
     #Register Blueprints
