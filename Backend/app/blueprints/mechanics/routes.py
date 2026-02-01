@@ -36,7 +36,9 @@ def login_mechanic():
             "last_name": mechanic.last_name,
             "email": mechanic.email,
             "phone": mechanic.phone,
-            "speciality": mechanic.speciality
+            "specialty": mechanic.specialty
+
+
         }
     }), 200
 
