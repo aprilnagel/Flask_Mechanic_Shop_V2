@@ -74,7 +74,8 @@ def create_mechanic():
         "email": new_mechanic.email,
         "password": new_mechanic.password,   
         "phone": new_mechanic.phone,
-        "specialty": new_mechanic.specialty
+        "specialty": new_mechanic.specialty,
+        "role": "mechanic"
     }), 201
 
 
