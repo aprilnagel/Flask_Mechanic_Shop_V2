@@ -53,31 +53,34 @@ export default function Login() {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h2>Mechanic Login</h2>
+    <div className="login-form">
+      <form onSubmit={handleSubmit}>
+        <h2 className="login-title">Mechanic Login</h2>
 
-      {error && <p style={{ color: "red" }}>{error}</p>}
+        {error && <p style={{ color: "red" }}>{error}</p>}
 
-      <input
-        name="email"
-        placeholder="Email"
-        value={form.email}
-        onChange={handleChange}
-      />
+        <input
+          name="email"
+          placeholder="Email"
+          value={form.email}
+          onChange={handleChange}
+        />
 
-      <input
-        name="password"
-        type="password"
-        placeholder="Password"
-        value={form.password}
-        onChange={handleChange}
-      />
-
-      <button type="submit">Login</button>
-
-      <button type="button" onClick={() => navigate("/register")}>
-        Create an Account
-      </button>
+        <input
+          name="password"
+          type="password"
+          placeholder="Password"
+          value={form.password}
+          onChange={handleChange}
+        />
+    
+      <div className="login-actions">
+        <button type="submit">Login</button>
+        <button type="button" onClick={() => navigate("/register")}>
+          Register
+        </button>
+      </div>
     </form>
+    </div>
   );
 }

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../contexts/Auth";
 import { API_BASE_URL } from "../config";
+import TicketCard from "../components/TicketCard";
 
 export default function MyTickets() {
   const { token } = useAuth();
@@ -32,23 +33,17 @@ export default function MyTickets() {
 
   return (
     <div>
-      <h2>My Assigned Tickets</h2>
+        <h2>My Assigned Tickets</h2>
 
-      {tickets.length === 0 ? (
+        {tickets.length === 0 ? (
         <p>You have no assigned tickets.</p>
-      ) : (
-        <ul>
-          {tickets.map((t) => (
-            <li key={t.id} style={{ marginBottom: "10px" }}>
-              <strong>Ticket #{t.id}</strong><br />
-              Customer ID: {t.customer_id}<br />
-              Vehicle: {t.vehicle_year} {t.vehicle_make} {t.vehicle_model}<br />
-              Issue: {t.service_description}<br />
-              Status: {t.status}
-            </li>
-          ))}
-        </ul>
-      )}
+        ) : (
+        <div className="ticket-grid">
+            {tickets.map((t) => (
+            <TicketCard key={t.id} ticket={t} />
+            ))}
+        </div>
+        )}
     </div>
-  );
+    );
 }

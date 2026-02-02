@@ -1,0 +1,187 @@
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* MODERN FONT */
+body {
+  font-family: 'Inter', sans-serif;
+  background: #f7f8fa;
+  color: #222;
+  line-height: 1.6;
+  padding: 20px;
+}
+
+/* HEADERS */
+h1, h2, h3 {
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+/* LISTS */
+ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+li {
+  background: white;
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+/* BUTTONS */
+button {
+  background: #4f46e5; /* indigo */
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s ease;
+}
+
+button:hover {
+  background: #4338ca;
+}
+
+button:active {
+  background: #3730a3;
+}
+
+/* INPUTS */
+input {
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+/* CONTAINERS */
+
+
+button.danger {
+  background: #dc2626; /* red-600 */
+}
+
+button.danger:hover {
+  background: #b91c1c; /* red-700 */
+}
+
+button.danger:active {
+  background: #991b1b; /* red-800 */
+}
+
+.profile-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;          /* spacing between buttons */
+  margin-top: 20px;   /* spacing above the group */
+  align-items: center; /* center the buttons */
+}
+
+.profile-actions button {
+  width: 200px;        /* optional: consistent button width */
+}
+
+.login-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;          /* spacing between buttons */
+  margin-top: 20px;   /* spacing above the group */
+  align-items: center; /* center the buttons */
+}
+
+.login-actions button {
+  width: 200px;        /* optional: consistent width */
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;   /* centers the inputs */
+  gap: 12px;             /* spacing between inputs */
+  margin-top: 20px;
+}
+
+.login-form input {
+  width: 220px;          /* consistent width */
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.login-title {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.register-page {
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
+}
+.register-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+
+  width: 220px;   /* THIS is the missing piece */
+  margin: 0 auto; /* centers the form itself */
+}
+
+
+.register-form input {
+  width: 100%;             /* matches the form width */
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.register-btn {
+  width: 200px;
+  padding: 10px;
+}
+
+.home-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 60px;
+}
+
+.portal-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-top: 30px;
+}
+
+.portal-btn {
+  width: 220px;
+  padding: 12px;
+  font-size: 16px;
+  border-radius: 8px;
+  background-color: #4f46e5;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.portal-btn:hover {
+  background-color: #4338ca;
+}
+
+.register-form h2,
+.register-message,
+.coming-soon-note {
+  text-align: center;
+  width: 100%;
+}
+

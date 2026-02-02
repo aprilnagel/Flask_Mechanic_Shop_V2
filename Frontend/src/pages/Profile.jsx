@@ -22,32 +22,33 @@ export default function Profile() {
       )}
 
       <h2>Mechanic Profile</h2>
-      <p>
-        Welcome {mechanic.first_name} {mechanic.last_name}!
+      <p> Name: {mechanic.first_name} {mechanic.last_name}
       </p>
+      <p>Mechanic ID: {mechanic.id}</p>
       <p>Email: {mechanic.email}</p>
       <p>Phone: {mechanic.phone}</p>
       <p>Specialty: {mechanic.specialty}</p>
+      <p>Service Tickets Assigned: {(mechanic.service_tickets || []).length}</p>
+      {console.log("MECHANIC FROM BACKEND:", mechanic)}
+
 
       <hr />
+      
+      <div className="profile-actions">
+        <button onClick={() => navigate("/update")}>Update Profile</button>
 
-      <button onClick={() => navigate("/update")}>Update Profile</button>
+        <button onClick={() => navigate("/my_tickets")}>View My Tickets</button>
 
-      <button onClick={() => navigate("/my_tickets")}>View My Tickets</button>
-
-      <button onClick={() => navigate("/tickets")}>View All Tickets</button>
-
-      <button onClick={() => navigate("/customers/new")}>New Customer Form</button>
-
-      <button onClick={() => navigate("/tickets/new")}>
-        Create New Ticket
-      </button>
-
-
-
-      <button onClick={logout} style={{ color: "red" }}>
-        Logout
-      </button>
+        <button onClick={() => navigate("/tickets")}>View All Tickets</button>
+        
+        <button onClick={() => navigate("/tickets/new")}>
+          Create New Ticket
+        </button>
+    
+        <button onClick={logout} style={{ color: "red" }}>
+          Logout
+        </button>
+      </div>
     </div>
   );
 }
