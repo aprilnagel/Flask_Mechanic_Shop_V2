@@ -10,9 +10,8 @@ function NewCustomer() {
     last_name: "",
     email: "",
     phone: "",
-    password: "", // required by backend
-    address: "", // required by backend
-    role: "customer", // set role to customer
+    address: "",
+    role: "customer",
   });
 
   const [message, setMessage] = useState("");
@@ -25,11 +24,19 @@ function NewCustomer() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // ⭐ Auto-generate a temporary password
+    const tempPassword = crypto.randomUUID().slice(0, 12);
+
+    const payload = {
+      ...form,
+      password: tempPassword, // ⭐ required by backend
+    };
+
     try {
       const res = await fetch(`${API_BASE_URL}/customers`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify(payload),
       });
 
       const data = await res.json();
@@ -40,16 +47,15 @@ function NewCustomer() {
       if (res.ok) {
         setIsError(false);
         setMessage(
-          "Customer intake successful! A mechanic will be in touch soon. Customer portal coming soon!",
+          "Customer intake successful! A mechanic will be in touch soon. Customer portal coming soon!"
         );
 
-        // optional: clear form
+        // Clear form
         setForm({
           first_name: "",
           last_name: "",
           email: "",
           phone: "",
-          password: "",
           address: "",
           role: "customer",
         });
@@ -88,19 +94,16 @@ function NewCustomer() {
           value={form.email}
           onChange={handleChange}
         />
+
         <input
           name="phone"
           placeholder="Phone"
           value={form.phone}
           onChange={handleChange}
         />
-        <input
-          name="password"
-          type="password"
-          placeholder="Temporary Password"
-          value={form.password}
-          onChange={handleChange}
-        />
+
+        {/* ⭐ Password field removed — now auto-generated */}
+
         <input
           name="address"
           placeholder="Address"
@@ -129,6 +132,7 @@ function NewCustomer() {
             {message}
           </p>
         )}
+
         <p className="coming-soon-note">
           Customer portal coming soon — stay tuned!
         </p>
