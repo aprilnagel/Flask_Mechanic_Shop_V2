@@ -2,6 +2,7 @@ from app.extensions import ma
 from app.models import Customers
 
 class CustomerSchema(ma.Schema):
+    id = ma.Integer(dump_only=True)
     password = ma.String(load_only=True)
 
     class Meta:
@@ -15,7 +16,7 @@ class CustomerSchema(ma.Schema):
             "role",
             "password"
         )
-        dump_only = ("id",)
+        
          
         
 customer_schema = CustomerSchema()
