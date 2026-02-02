@@ -1,55 +1,57 @@
-import { useEffect, useState } from "react";
-import { useAuth } from "../contexts/Auth";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState, useContext } from "react";
 import { API_BASE_URL } from "../config";
+import { AuthContext } from "../contexts/Auth";
+import { useNavigate } from "react-router-dom";
 
 export default function Me() {
-  const { setMechanic } = useAuth();
+  const { login } = useContext(AuthContext);
   const navigate = useNavigate();
-  const [error, setError] = useState("");
+
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function loadMechanic() {
       const token = localStorage.getItem("token");
 
       if (!token) {
-        setError("You must be logged in to access your account.");
         navigate("/login");
         return;
       }
 
       try {
-        const response = await fetch(`${API_BASE_URL}/mechanics/me`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+        const res = await fetch(`${API_BASE_URL}/mechanics/me`, {
+          headers: { Authorization: `Bearer ${token}` },
         });
 
-        if (!response.ok) {
-          setError("Your session has expired. Please log in again.");
+        if (!res.ok) {
           localStorage.removeItem("token");
           navigate("/login");
           return;
         }
 
-        const data = await response.json();
-        setMechanic(data);
+        const data = await res.json();
+
+        // Save mechanic to context
+        login(token, data);
+
+        // Keep loading screen visible for 0.8 seconds
         setTimeout(() => {
-        navigate("/profile", { state: { success: "Welcome back!" } });
-      }, 800);
+          setLoading(false);
+          navigate("/profile");
+        }, 800);
 
       } catch (err) {
-        setError("Unable to connect to the server. Please try again later.");
+        console.error("Error loading profile:", err);
+        navigate("/login");
       }
     }
 
     loadMechanic();
-  }, []);
+  }, [login, navigate]);
 
   return (
-    <div>
-      <h2>Loading your account...</h2>
-      {error && <p style={{ color: "red" }}>{error}</p>}
+    <div className="home-page">
+      <h2>Loading profile...</h2>
     </div>
   );
 }

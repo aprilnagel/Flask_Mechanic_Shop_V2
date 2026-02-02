@@ -37,8 +37,6 @@ export default function Profile() {
 
       <button onClick={() => navigate("/tickets")}>View All Tickets</button>
 
-      <button onClick={() => navigate("/customers/new")}>New Customer Form</button>
-
       <button onClick={() => navigate("/tickets/new")}>
         Create New Ticket
       </button>

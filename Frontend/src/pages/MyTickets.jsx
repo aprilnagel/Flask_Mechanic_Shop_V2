@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../contexts/Auth";
 import { API_BASE_URL } from "../config";
+import TicketCard from "../components/TicketCard";
 
 export default function MyTickets() {
   const { token } = useAuth();
@@ -39,12 +40,8 @@ export default function MyTickets() {
       ) : (
         <ul>
           {tickets.map((t) => (
-            <li key={t.id} style={{ marginBottom: "10px" }}>
-              <strong>Ticket #{t.id}</strong><br />
-              Customer ID: {t.customer_id}<br />
-              Vehicle: {t.vehicle_year} {t.vehicle_make} {t.vehicle_model}<br />
-              Issue: {t.service_description}<br />
-              Status: {t.status}
+            <li key={t.id}>
+              <TicketCard ticket={t} />
             </li>
           ))}
         </ul>
