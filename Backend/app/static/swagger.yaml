@@ -296,6 +296,8 @@ paths: #Information about your API endpoints will go here
               last_name: "Smith"
               email: "jane.smith@example.com"
               phone: "555-555-5555"
+              password: "hashedpassword"
+              address: "123 Main St, Anytown, USA"
               role: "customer"
         400:
           description: "Bad Request - Invalid input data. Can be due to validation errors or duplicate email or phone."
@@ -1093,30 +1095,32 @@ definitions: ##Information about the shape of input and output json
       token:
         type: string
 
-  CustomerCreate: #input data for create customer route
+  CustomerCreate:
     type: object
-    properties:
-      first_name:
-        type: string
-        example: "John"
-      last_name:
-        type: string
-        example: "Doe"
-      password:
-        type: string
-        example: "securepassword"
-      email:
-        type: string
-        example: "mechanic@example.com"
-      phone:
-        type: string
-        example: "555-555-5555"
     required:
       - first_name
       - last_name
-      - password
       - email
       - phone
+      - address
+      - password
+    properties:
+      first_name:
+        type: string
+      last_name:
+        type: string
+      email:
+        type: string
+      phone:
+        type: string
+      address:
+        type: string
+      password:
+        type: string
+        description: "Temporary password (frontend auto-generates, but Swagger must provide one)"
+      role:
+        type: string
+        default: "customer"
   
   CustomerCreateResponse: #output data for create customer route
     type: object
