@@ -5,6 +5,10 @@ from app.models import Customers
 class CustomerSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Customers
+        load_instance = True
+        include_fk = True
+        dump_only = ("id",)
+
         
         
 customer_schema = CustomerSchema()
