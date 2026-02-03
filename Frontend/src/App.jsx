@@ -5,7 +5,6 @@ import Profile from "./pages/Profile";
 import Me from "./pages/Me";
 import UpdateMechanic from "./pages/UpdateMechanic";
 import CreateServiceTicket from "./pages/CreateServiceTicket";
-
 import AllTickets from "./pages/AllTickets";
 import MyTickets from "./pages/MyTickets";
 import Header from "./components/Header/Header";

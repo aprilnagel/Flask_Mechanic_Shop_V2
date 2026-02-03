@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../contexts/Auth";
 import { API_BASE_URL } from "../config";
-import TicketCard from "../components/TicketCard";
+import TicketCard from "../components/TicketCard/TicketCard";
 
 export default function AllTickets() {
   const { token } = useAuth();
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState("All");
 
   // Fetch all tickets
   useEffect(() => {
@@ -45,7 +46,7 @@ export default function AllTickets() {
             service_ticket_id: ticketId,
             mechanic_id: mechanicId,
           }),
-        }
+        },
       );
 
       if (res.ok) {
@@ -73,7 +74,7 @@ export default function AllTickets() {
             service_ticket_id: ticketId,
             mechanic_id: mechanicId,
           }),
-        }
+        },
       );
 
       if (res.ok) {
@@ -92,24 +93,82 @@ export default function AllTickets() {
     return <p style={{ color: "red" }}>Unexpected server response.</p>;
   }
 
+  // Status counts
+  const pending = tickets.filter((t) => t.status === "Pending").length;
+  const inProgress = tickets.filter((t) => t.status === "In Progress").length;
+  const completed = tickets.filter((t) => t.status === "Completed").length;
+  const unassigned = tickets.filter((t) => t.mechanics.length === 0).length;
+
+  // Filter logic
+  const filteredTickets = tickets.filter((t) => {
+    if (filter === "All") return true;
+    if (filter === "Unassigned") return t.mechanics.length === 0;
+    return t.status === filter;
+  });
+
   return (
     <div>
       <h2>All Service Tickets</h2>
 
-      {tickets.length === 0 ? (
-        <p>No tickets found.</p>
+      {/* Status Summary */}
+      <p>Total Tickets: {tickets.length}</p>
+      <p>Pending: {pending}</p>
+      <p>In Progress: {inProgress}</p>
+      <p>Completed: {completed}</p>
+      <p>Unassigned: {unassigned}</p>
+
+      {/* Filter Buttons */}
+      <div className="ticket-filters">
+        <button
+          className={filter === "All" ? "active" : ""}
+          onClick={() => setFilter("All")}
+        >
+          All
+        </button>
+
+        <button
+          className={filter === "Pending" ? "active" : ""}
+          onClick={() => setFilter("Pending")}
+        >
+          Pending
+        </button>
+
+        <button
+          className={filter === "In Progress" ? "active" : ""}
+          onClick={() => setFilter("In Progress")}
+        >
+          In Progress
+        </button>
+
+        <button
+          className={filter === "Completed" ? "active" : ""}
+          onClick={() => setFilter("Completed")}
+        >
+          Completed
+        </button>
+
+        <button
+          className={filter === "Unassigned" ? "active" : ""}
+          onClick={() => setFilter("Unassigned")}
+        >
+          Unassigned
+        </button>
+      </div>
+
+      {/* Ticket Grid */}
+      {filteredTickets.length === 0 ? (
+        <p>No tickets match this filter.</p>
       ) : (
-        <ul>
-          {tickets.map((t) => (
-            <li key={t.id}>
-              <TicketCard
-                ticket={t}
-                onAssign={assignMechanic}
-                onRemove={removeMechanic}
-              />
-            </li>
+        <div className="ticket-grid">
+          {filteredTickets.map((t) => (
+            <TicketCard
+              key={t.id}
+              ticket={t}
+              onAssign={assignMechanic}
+              onRemove={removeMechanic}
+            />
           ))}
-        </ul>
+        </div>
       )}
     </div>
   );

@@ -1,10 +1,34 @@
 import { useAuth } from "../contexts/Auth";
 import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { API_BASE_URL } from "../config";
 
 export default function Profile() {
-  const { mechanic, logout } = useAuth();
+  const { mechanic, token, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const [myTickets, setMyTickets] = useState([]);
+
+  useEffect(() => {
+    async function fetchMyTickets() {
+      try {
+        const res = await fetch(`${API_BASE_URL}/mechanics/my_tickets`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          setMyTickets(data);
+        }
+      } catch (err) {
+        console.error("Error fetching mechanic tickets:", err);
+      }
+    }
+
+    fetchMyTickets();
+  }, [token]);
 
   if (!mechanic) {
     return (
@@ -15,37 +39,31 @@ export default function Profile() {
     );
   }
 
-  return (
-    <div>
-      {location.state?.success && (
-        <p style={{ color: "green" }}>{location.state.success}</p>
-      )}
+  // Count active tickets
+  const activeTickets = myTickets.filter(
+    (t) => t.status === "Pending" || t.status === "In Progress"
+  ).length;
 
-      <h2>Mechanic Profile</h2>
-      <p>
-        Welcome {mechanic.first_name} {mechanic.last_name}!
-      </p>
+  return (
+    <div className="profile-page">
+      <h2>Your Profile</h2>
+
+      <p>ID: {mechanic.id}</p>
+      <p>Name: {mechanic.first_name} {mechanic.last_name}</p>
       <p>Email: {mechanic.email}</p>
       <p>Phone: {mechanic.phone}</p>
       <p>Specialty: {mechanic.specialty}</p>
 
-      <hr />
+      <p>Total Assigned Tickets: {myTickets.length}</p>
+      <p>Active Tickets: {activeTickets}</p>
 
-      <button onClick={() => navigate("/update")}>Update Profile</button>
-
-      <button onClick={() => navigate("/my_tickets")}>View My Tickets</button>
-
-      <button onClick={() => navigate("/tickets")}>View All Tickets</button>
-
-      <button onClick={() => navigate("/tickets/new")}>
-        Create New Ticket
-      </button>
-
-
-
-      <button onClick={logout} style={{ color: "red" }}>
-        Logout
-      </button>
+      <div className="profile-actions">
+        <button onClick={() => navigate("/tickets")}>View All Tickets</button>
+        <button onClick={() => navigate("/my_tickets")}>My Tickets</button>
+        <button onClick={() => navigate("/update-profile")}>Update Profile</button>
+        <button onClick={() => navigate("/create-ticket")}>Create Ticket</button>
+        <button className="danger" onClick={logout}>Logout</button>
+      </div>
     </div>
   );
 }

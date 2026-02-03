@@ -62,33 +62,33 @@ input {
   font-size: 14px;
 }
 
-/* CONTAINERS */
-
-
+/* DANGER BUTTONS */
 button.danger {
-  background: #dc2626; /* red-600 */
+  background: #dc2672; /* red-600 */
 }
 
 button.danger:hover {
-  background: #b91c1c; /* red-700 */
+  opacity: 0.8;
 }
 
 button.danger:active {
-  background: #991b1b; /* red-800 */
+  background: #926d7d; /* red-800 */
 }
 
+/* PROFILE PAGE */
 .profile-actions {
   display: flex;
   flex-direction: column;
-  gap: 12px;          /* spacing between buttons */
-  margin-top: 20px;   /* spacing above the group */
-  align-items: center; /* center the buttons */
+  gap: 12px;
+  margin-top: 20px;
+  align-items: center;
 }
 
 .profile-actions button {
-  width: 200px;        /* optional: consistent button width */
+  width: 200px;
 }
 
+/* LOGIN PAGE */
 .login-actions {
   display: flex;
   flex-direction: column;
@@ -121,6 +121,7 @@ button.danger:active {
   text-align: center;
 }
 
+/* REGISTER PAGE */
 .register-page {
   display: flex;
   justify-content: center;
@@ -149,38 +150,58 @@ button.danger:active {
   padding: 10px;
 }
 
-.home-page {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: 60px;
-}
-
-.portal-buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  margin-top: 30px;
-}
-
-.portal-btn {
-  width: 220px;
-  padding: 12px;
-  font-size: 16px;
-  border-radius: 8px;
-  background-color: #4f46e5;
-  color: white;
-  border: none;
-  cursor: pointer;
-}
-
-.portal-btn:hover {
-  background-color: #4338ca;
-}
-
 .register-form h2,
 .register-message,
 .coming-soon-note {
   text-align: center;
   width: 100%;
 }
+
+/* TICKET GRID FOR ALL TICKETS AND MY TICKETS PAGES */
+.ticket-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-top: 20px;
+}
+
+@media (max-width: 900px) {
+  .ticket-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .ticket-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* TICKET FILTER BUTTONS */
+.ticket-filters {
+  display: flex;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.ticket-filters {
+  display: flex;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.ticket-filters button {
+  flex: 1; /* makes each button expand equally */
+}
+
+
+.ticket-filters button:hover {
+    opacity: 0.5;
+}
+
+.ticket-filters .active {
+  opacity: 0.8;
+}
+
+
+

@@ -3,7 +3,7 @@ import "./TicketCard.css";
 export default function TicketCard({ ticket, onAssign, onRemove }) {
   return (
     <div className="ticket-card">
-      <h3>Ticket #{ticket.id}</h3>
+      <h3>Ticket # : {ticket.id}</h3>
 
       <p><strong>Customer ID:</strong> {ticket.customer_id}</p>
       <p>
