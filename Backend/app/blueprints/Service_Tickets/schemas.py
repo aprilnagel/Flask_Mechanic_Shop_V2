@@ -1,11 +1,11 @@
 from marshmallow import fields
 from app.extensions import ma
 from app.models import Service_Tickets
-from app.blueprints.mechanics.schemas import MechanicSchema
+from app.blueprints.mechanics.schemas import MechanicDumpSchema
 
 class ServiceTicketSchema(ma.SQLAlchemyAutoSchema):
     mechanics = fields.List(
-        fields.Nested(MechanicSchema),
+        fields.Nested(MechanicDumpSchema),
         attribute="mechanics_service_tickets"
     )
 
