@@ -43,7 +43,7 @@ def create_app(config_name):
     
     @app.route("/fix_pending_to_open")
     def fix_pending_to_open():
-        from app.models import Service_Tickets
+        from .models import Service_Tickets
         updated = Service_Tickets.query.filter_by(status="Pending").update({"status": "Open"})
         db.session.commit()
         return f"Updated {updated} tickets from Pending to Open."
