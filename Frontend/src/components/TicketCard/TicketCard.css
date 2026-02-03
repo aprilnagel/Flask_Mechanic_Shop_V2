@@ -139,3 +139,35 @@
   background: white;
   width: 180px;
 }
+
+/* Shared badge style */
+.status-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: white;
+}
+
+/* Completed (already exists but included for consistency) */
+.status-badge.completed {
+  background-color: #4caf50; /* green */
+}
+
+/* Open */
+.status-badge.open {
+  background-color: #2196f3; /* blue */
+}
+
+/* In Progress */
+.status-badge.inprogress {
+  background-color: #ff9800; /* orange */
+}
+
+/* Layout for each row */
+.status-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}

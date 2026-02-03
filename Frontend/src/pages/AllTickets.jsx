@@ -128,6 +128,7 @@ export default function AllTickets() {
     if (filter === "Unassigned") return t.mechanics.length === 0;
     return t.status === filter;
   });
+
   const sortedTickets = [...filteredTickets].sort((a, b) => a.id - b.id);
 
   return (
@@ -144,7 +145,7 @@ export default function AllTickets() {
 
       <div className="ticket-filters">
         <button className={filter === "All" ? "active" : ""} onClick={() => setFilter("All")}>All</button>
-        <button className={filter === "Pending" ? "active" : ""} onClick={() => setFilter("Pending")}>Pending</button>
+        <button className={filter === "Pending" ? "active" : ""} onClick={() => setFilter("Pending")}>Open</button>
         <button className={filter === "In Progress" ? "active" : ""} onClick={() => setFilter("In Progress")}>In Progress</button>
         <button className={filter === "Completed" ? "active" : ""} onClick={() => setFilter("Completed")}>Completed</button>
         <button className={filter === "Unassigned" ? "active" : ""} onClick={() => setFilter("Unassigned")}>Unassigned</button>
@@ -162,6 +163,7 @@ export default function AllTickets() {
               removeMechanic={removeMechanic}
               mechanics={mechanics}
               showAssignControls={true}
+              // No onStatusChange → no status buttons
             />
           ))}
         </div>

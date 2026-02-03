@@ -4,7 +4,6 @@ import { API_BASE_URL } from "../config";
 import TicketCard from "../components/TicketCard/TicketCard";
 import BackToProfile from "../components/Back To Profile/BackToProfile";
 
-
 export default function MyTickets() {
   const { token } = useAuth();
   const [tickets, setTickets] = useState([]);
@@ -21,9 +20,12 @@ export default function MyTickets() {
         });
 
         const data = await res.json();
-        setTickets(data);
+
+        // SAFETY FIX — prevents crashes
+        setTickets(Array.isArray(data) ? data : []);
       } catch (err) {
         console.error("Error fetching mechanic tickets:", err);
+        setTickets([]); // fallback
       } finally {
         setLoading(false);
       }
@@ -67,10 +69,8 @@ export default function MyTickets() {
 
   return (
     <div className="ticket-details-page page-with-floating-button">
-      {/* PAGE TITLE */}
       <h2 className="page-title">My Tickets</h2>
 
-      {/* COUNTERS */}
       {tickets.length > 0 && (
         <div className="ticket-counts">
           <span>Total: {total}</span>
@@ -80,7 +80,6 @@ export default function MyTickets() {
         </div>
       )}
 
-      {/* TICKET GRID */}
       {tickets.length === 0 ? (
         <p>You have no assigned tickets.</p>
       ) : (
@@ -94,6 +93,7 @@ export default function MyTickets() {
           ))}
         </div>
       )}
+
       <BackToProfile />
     </div>
   );

@@ -46,39 +46,57 @@ const TicketCard = ({
         )}
       </div>
 
-      {/* STATUS SECTION */}
+      {/* STATUS SECTION — unified badge styling */}
       <div className="ticket-section status-section">
 
+        {/* COMPLETED */}
         {ticket.status === "Completed" && (
-          <div className="completed-section">
-            <span className="completed-badge">✓ Completed</span>
+          <div className="status-row">
+            <span className="status-badge completed">✓ Completed</span>
 
-            <button
-              className="reopen-btn"
-              onClick={() => onStatusChange(ticket.id, "Pending")}
-            >
-              Reopen
-            </button>
+            {onStatusChange && (
+              <button
+                className="reopen-btn"
+                onClick={() => onStatusChange(ticket.id, "Pending")}
+              >
+                Reopen
+              </button>
+            )}
           </div>
         )}
 
+        {/* OPEN (backend = Pending) */}
         {ticket.status === "Pending" && (
-          <button
-            className="start-work-btn"
-            onClick={() => onStatusChange(ticket.id, "In Progress")}
-          >
-            Start Work
-          </button>
+          <div className="status-row">
+            <span className="status-badge open">Open</span>
+
+            {onStatusChange && (
+              <button
+                className="start-work-btn"
+                onClick={() => onStatusChange(ticket.id, "In Progress")}
+              >
+                Start Work
+              </button>
+            )}
+          </div>
         )}
 
+        {/* IN PROGRESS */}
         {ticket.status === "In Progress" && (
-          <button
-            className="mark-complete-btn"
-            onClick={() => onStatusChange(ticket.id, "Completed")}
-          >
-            Mark Complete
-          </button>
+          <div className="status-row">
+            <span className="status-badge inprogress">In Progress</span>
+
+            {onStatusChange && (
+              <button
+                className="mark-complete-btn"
+                onClick={() => onStatusChange(ticket.id, "Completed")}
+              >
+                Mark Complete
+              </button>
+            )}
+          </div>
         )}
+
       </div>
 
       {/* ASSIGN MECHANIC DROPDOWN */}

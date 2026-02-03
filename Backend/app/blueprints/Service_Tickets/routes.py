@@ -118,21 +118,19 @@ def assign_mechanic_to_service_ticket():
     # 4. Add mechanic to service ticket
     service_ticket.mechanics_service_tickets.append(mechanic)
 
-    # 5. Update status to "In Progress"
-    service_ticket.status = "In Progress"
-
-    # 6. Confirmation message
+    # 5. Confirmation message (NO status change)
     confirmation_message = (
-        f"Mechanic {mechanic.id}, {mechanic.first_name} {mechanic.last_name} assigned to Service Ticket {service_ticket.id}. "
-        f"Status set to In Progress."
+        f"Mechanic {mechanic.id}, {mechanic.first_name} {mechanic.last_name} "
+        f"assigned to Service Ticket {service_ticket.id}."
     )
 
-    # 7. Commit changes and return updated ticket
+    # 6. Commit changes and return updated ticket
     db.session.commit()
     response = service_ticket_schema.dump(service_ticket)
     response["confirmation"] = confirmation_message
 
     return jsonify(response), 200
+
 
 
 
