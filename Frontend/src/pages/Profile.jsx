@@ -41,7 +41,7 @@ export default function Profile() {
   }
 
   const activeTickets = myTickets.filter(
-    (t) => t.status === "Open" || t.status === "In Progress",
+    (t) => t.status === "Pending" || t.status === "In Progress"
   ).length;
 
   async function handleDeleteAccount() {

@@ -222,12 +222,18 @@ button.danger:hover {
   margin-bottom: 10px;
 }
 .success {
+  margin-top: 20px;
   color: #2e7d32;
   background: #e8f5e9;
   padding: 8px 12px;
   border-radius: 6px;
   border: 1px solid #c8e6c9;
+  transition: opacity 1s ease-out;
 }
+.success.fade-out {
+  opacity: 0;
+}
+
 
 .ticket-details-page {
   min-height: 100vh;

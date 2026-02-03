@@ -23,6 +23,7 @@ export default function CreateServiceTicket() {
 
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [fade, setFade] = useState(false);
 
   // Fetch customers for dropdown
   useEffect(() => {
@@ -74,6 +75,16 @@ export default function CreateServiceTicket() {
       await res.json();
       setSuccess("Service ticket created!");
 
+      // Start fade-out after 2 seconds
+      setTimeout(() => {
+        setFade(true);
+      }, 2000);
+
+      // Remove message after fade completes
+      setTimeout(() => {
+        setSuccess("");
+      }, 3000);
+
       // Reset form but keep prefilled ID if coming from NewCustomer
       setFormData({
         vehicle_make: "",
@@ -92,7 +103,6 @@ export default function CreateServiceTicket() {
       <h2 className="page-title">Create New Service Ticket</h2>
 
       {error && <p className="error">{error}</p>}
-      {success && <p className="success">{success}</p>}
 
       <form className="create-ticket-form" onSubmit={handleSubmit}>
         <label>Vehicle Make:</label>
@@ -146,8 +156,13 @@ export default function CreateServiceTicket() {
             ))}
         </select>
 
-        <button type="submit">Create Ticket</button>
+        <button type="submit">Submit Ticket</button>
       </form>
+
+      {/* Success message BELOW the form */}
+      {success && (
+        <p className={`success ${fade ? "fade-out" : ""}`}>{success}</p>
+      )}
 
       <BackToProfile />
     </div>
