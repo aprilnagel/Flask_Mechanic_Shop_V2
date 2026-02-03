@@ -42,6 +42,35 @@ export default function Profile() {
     (t) => t.status === "Open" || t.status === "In Progress"
   ).length;
 
+  async function handleDeleteAccount() {
+  const confirmed = window.confirm(
+    "Are you sure you want to delete your account? This cannot be undone."
+  );
+
+  if (!confirmed) return;
+
+  try {
+    const res = await fetch(`${API_BASE_URL}/mechanics/${mechanic.id}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!res.ok) {
+      alert("Failed to delete account.");
+      return;
+    }
+
+    logout();
+    navigate("/login");
+
+  } catch (err) {
+    console.error("Error deleting account:", err);
+    alert("Server error. Try again later.");
+  }
+}
+
   return (
     <div className="profile-page">
       <h2 className="page-title">Your Profile</h2>
@@ -65,6 +94,9 @@ export default function Profile() {
         <button onClick={() => navigate("/update_profile")}>Update Profile</button>
         <button onClick={() => navigate("/service_tickets")}>Create Ticket</button>
         <button className="danger" onClick={logout}>Logout</button>
+        <button className="danger" onClick={handleDeleteAccount}>
+          Delete Account
+        </button>
       </div>
     </div>
   );

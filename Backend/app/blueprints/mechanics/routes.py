@@ -111,10 +111,22 @@ def delete_mechanic(mechanic_id):
     if not mechanic:
         return jsonify({"message": "Mechanic not found"}), 404
 
-    db.session.delete(mechanic)
-    db.session.commit()
+    try:
+        # Remove mechanic from all assigned tickets (many-to-many cleanup)
+        mechanic.tickets.clear()
 
-    return jsonify({"message": f"Mechanic {mechanic_id} deleted successfully"}), 200
+        # Delete mechanic profile
+        db.session.delete(mechanic)
+        db.session.commit()
+
+        return jsonify({
+            "message": f"Mechanic {mechanic_id} deleted and removed from all assigned tickets."
+        }), 200
+
+    except Exception as e:
+        db.session.rollback()
+        print("Error deleting mechanic:", e)
+        return jsonify({"message": "Server error deleting mechanic"}), 500
 
 
 # ------------------------ UPDATE MECHANIC ------------------------
