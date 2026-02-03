@@ -1,55 +1,59 @@
-import "./TicketCard.css";
-
-export default function TicketCard({ ticket, onAssign, onRemove }) {
+export default function TicketCard({ ticket, onAssign, onRemove, onStatusChange }) {
   return (
     <div className="ticket-card">
-      <h3>Ticket # : {ticket.id}</h3>
+      <h3>Ticket #{ticket.id}</h3>
 
-      <p><strong>Customer ID:</strong> {ticket.customer_id}</p>
-      <p>
-        <strong>Vehicle:</strong> {ticket.vehicle_year} {ticket.vehicle_make}{" "}
-        {ticket.vehicle_model}
-      </p>
-      <p><strong>Issue:</strong> {ticket.service_description}</p>
       <p><strong>Status:</strong> {ticket.status}</p>
+      <p><strong>Customer:</strong> {ticket.customer_name}</p>
+      <p><strong>Vehicle:</strong> {ticket.vehicle}</p>
+      <p><strong>Description:</strong> {ticket.description}</p>
 
-      <div className="mechanics-section">
-        <strong>Assigned Mechanics:</strong>
-        <ul className="mechanic-list">
-          {(ticket.mechanics || []).length > 0 ? (
-            (ticket.mechanics || []).map((m) => (
+      {/* Assigned mechanics */}
+      {ticket.mechanics && ticket.mechanics.length > 0 ? (
+        <div>
+          <strong>Assigned Mechanics:</strong>
+          <ul className="mechanic-list">
+            {ticket.mechanics.map((m) => (
               <li key={m.id} className="mechanic-item">
-                {m.id} — {m.first_name} {m.last_name}
-
+                {m.name}
                 {onRemove && (
-                  <button
-                    className="danger"
-                    onClick={() => onRemove(ticket.id, m.id)}
-                  >
-                    Remove
-                  </button>
+                  <button onClick={() => onRemove(ticket.id, m.id)}>Remove</button>
                 )}
               </li>
-            ))
-          ) : (
-            <li className="mechanic-item">None</li>
-          )}
-        </ul>
-      </div>
+            ))}
+          </ul>
+        </div>
+      ) : (
+        <p><em>No mechanics assigned</em></p>
+      )}
 
+      {/* Admin assign controls (AllTickets only) */}
       {onAssign && (
-        <div className="assign-section">
-          <input
-            type="number"
-            placeholder="Mechanic ID"
-            value={ticket._assignInput || ""}
-            onChange={(e) => {
-              ticket._assignInput = e.target.value;
-            }}
-          />
-          <button onClick={() => onAssign(ticket.id, ticket._assignInput)}>
-            Assign
-          </button>
+        <button onClick={() => onAssign(ticket.id, prompt("Mechanic ID:"))}>
+          Assign Mechanic
+        </button>
+      )}
+
+      {/* Mechanic status controls (MyTickets only) */}
+      {onStatusChange && (
+        <div className="status-actions">
+          {ticket.status !== "In Progress" && (
+            <button onClick={() => onStatusChange(ticket.id, "In Progress")}>
+              Start Work
+            </button>
+          )}
+
+          {ticket.status !== "Completed" && (
+            <button onClick={() => onStatusChange(ticket.id, "Completed")}>
+              Mark Complete
+            </button>
+          )}
+
+          {ticket.status !== "Pending" && (
+            <button onClick={() => onStatusChange(ticket.id, "Pending")}>
+              Reopen
+            </button>
+          )}
         </div>
       )}
     </div>

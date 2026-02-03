@@ -1,26 +1,75 @@
-.ticket-card {
-  background: white;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-  margin: 20px auto;        /* centers the card */
-  width: 80%;               /* smaller width */
-  max-width: 600px;         /* prevents giant cards on big screens */
-}
-
+/* TICKET GRID FOR ALL TICKETS AND MY TICKETS PAGES */
 .ticket-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 20px;
-  padding: 20px 0;
+  margin-top: 20px;
 }
 
+@media (max-width: 900px) {
+  .ticket-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .ticket-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* TICKET FILTER BUTTONS */
+.ticket-filters {
+  display: flex;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.ticket-filters button {
+  flex: 1;
+}
+
+.ticket-filters button:hover {
+  opacity: 0.5;
+}
+
+.ticket-filters .active {
+  opacity: 0.8;
+}
+
+/* STATUS BUTTONS */
+.status-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.status-actions button {
+  width: 100%;
+}
+
+.status-actions button:hover {
+  opacity: 0.8;
+}
+
+/* TICKET CARD */
+.ticket-card {
+  background: white;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
 
 .ticket-card h3 {
   margin-bottom: 10px;
   font-weight: 600;
 }
 
+/* MECHANICS SECTION */
 .mechanics-section {
   margin-top: 10px;
 }
@@ -41,32 +90,29 @@
   align-items: center;
 }
 
+
+/* ASSIGN SECTION */
 .assign-section {
   margin-top: 16px;
   display: flex;
-  justify-content: center;   /* centers input + button */
+  justify-content: center;
   align-items: center;
-  gap: 10px;                 /* spacing between input and button */
+  gap: 10px;
 }
 
 .assign-section input {
   padding: 8px 10px;
   border-radius: 6px;
   border: 1px solid #ccc;
-  width: 120px;              /* optional: keeps it compact */
-  text-align: center;        /* looks cleaner for numeric input */
+  width: 120px;
+  text-align: center;
 }
 
-
-button.danger {
-  background: #dc2626;
-  color: white;
-  border: none;
-  padding: 6px 10px;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-button.danger:hover {
-  background: #b91c1c;
+/* TICKET LISTS */
+.styled-list-item {
+  background: white;
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
 }
