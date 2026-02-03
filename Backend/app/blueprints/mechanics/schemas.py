@@ -46,7 +46,7 @@ class MechanicDumpSchema(ma.SQLAlchemyAutoSchema):
         model = Mechanics
         load_instance = False
         include_fk = True
-        exclude = ("password",)
+        exclude = ()   # allow password to be returned
 
 
 mechanic_schema = MechanicDumpSchema()
