@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../contexts/Auth";
 import { API_BASE_URL } from "../config";
 import TicketCard from "../components/TicketCard/TicketCard";
+import BackToProfile from "../components/Back To Profile/BackToProfile";
+
 
 export default function MyTickets() {
   const { token } = useAuth();
@@ -64,7 +66,7 @@ export default function MyTickets() {
   const completed = tickets.filter((t) => t.status === "Completed").length;
 
   return (
-    <div>
+    <div className="ticket-details-page page-with-floating-button">
       {/* PAGE TITLE */}
       <h2 className="page-title">My Tickets</h2>
 
@@ -92,6 +94,7 @@ export default function MyTickets() {
           ))}
         </div>
       )}
+      <BackToProfile />
     </div>
   );
 }

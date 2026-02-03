@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../contexts/Auth";
 import { API_BASE_URL } from "../config";
 import TicketCard from "../components/TicketCard/TicketCard";
+import BackToProfile from "../components/Back To Profile/BackToProfile";
 
 export default function AllTickets() {
   const { token } = useAuth();
@@ -108,7 +109,7 @@ export default function AllTickets() {
   });
 
   return (
-    <div>
+    <div className="ticket-details-page page-with-floating-button">
       {/* PAGE TITLE */}
       <h2 className="page-title">All Service Tickets</h2>
 
@@ -174,6 +175,7 @@ export default function AllTickets() {
           ))}
         </div>
       )}
+      <BackToProfile />
     </div>
   );
 }

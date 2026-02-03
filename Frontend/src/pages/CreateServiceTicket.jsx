@@ -2,14 +2,16 @@ import { useState, useEffect } from "react";
 import { useAuth } from "../contexts/Auth";
 import { useNavigate, useLocation } from "react-router-dom";
 import { API_BASE_URL } from "../config";
+import BackToProfile from "../components/Back To Profile/BackToProfile";
 
 export default function CreateServiceTicket() {
   const { token, mechanic } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
-  // If we came from NewCustomer.jsx, this will contain the new customer's ID
   const prefilledCustomerId = location.state?.customerId || "";
+
+  const [customers, setCustomers] = useState([]);
 
   const [formData, setFormData] = useState({
     vehicle_make: "",
@@ -22,6 +24,23 @@ export default function CreateServiceTicket() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
+  // Fetch customers for dropdown
+  useEffect(() => {
+    async function fetchCustomers() {
+      try {
+        const res = await fetch(`${API_BASE_URL}/customers`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await res.json();
+        setCustomers(data);
+      } catch (err) {
+        console.error("Error fetching customers:", err);
+      }
+    }
+
+    fetchCustomers();
+  }, [token]);
+
   function handleChange(e) {
     setFormData({
       ...formData,
@@ -33,13 +52,6 @@ export default function CreateServiceTicket() {
     e.preventDefault();
     setError("");
     setSuccess("");
-    console.log("🔧 Submitting ticket...");
-    console.log("➡️ Form data:", formData);
-    console.log("➡️ Mechanic:", mechanic);
-
-    const body = {
-      ...formData,
-    };
 
     try {
       const res = await fetch(`${API_BASE_URL}/service_tickets`, {
@@ -48,37 +60,30 @@ export default function CreateServiceTicket() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(body),
+        body: JSON.stringify(formData),
       });
 
       if (!res.ok) {
         setError("Failed to create ticket. Please check your inputs.");
+        console.log("Form Data:", formData);
         return;
       }
 
       await res.json();
       setSuccess("Service ticket created!");
-
-      setTimeout(() => {
-        navigate("/tickets", { state: { success: "Ticket created!" } });
-      }, 800);
     } catch (err) {
       setError("Server error. Try again later.");
     }
   }
 
   return (
-    <div>
-      <h2>Create New Service Ticket</h2>
+    <div className="create-ticket-page page-with-floating-button">
+      <h2 className="page-title">Create New Service Ticket</h2>
 
-      {location.state?.success && (
-        <p style={{ color: "green" }}>{location.state.success}</p>
-      )}
+      {error && <p className="error">{error}</p>}
+      {success && <p className="success">{success}</p>}
 
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      {success && <p style={{ color: "green" }}>{success}</p>}
-
-      <form onSubmit={handleSubmit}>
+      <form className="create-ticket-form" onSubmit={handleSubmit}>
         <label>Vehicle Make:</label>
         <input
           name="vehicle_make"
@@ -111,17 +116,26 @@ export default function CreateServiceTicket() {
           required
         />
 
-        <label>Customer ID:</label>
-        <input
+        <label>Customer:</label>
+        <select
           name="customer_id"
           value={formData.customer_id}
           onChange={handleChange}
           required
           disabled={!!prefilledCustomerId}
-        />
+        >
+          <option value="">Select a customer</option>
+          {customers.map((c) => (
+            <option key={c.id} value={c.id}>
+              {c.first_name} {c.last_name} (ID: {c.id})
+            </option>
+          ))}
+        </select>
 
         <button type="submit">Create Ticket</button>
       </form>
+
+      <BackToProfile />
     </div>
   );
 }

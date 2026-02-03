@@ -10,6 +10,7 @@ import MyTickets from "./pages/MyTickets";
 import Header from "./components/Header/Header";
 import "./App.css";
 
+
 export default function App() {
   return (
     <>
@@ -21,7 +22,7 @@ export default function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/me" element={<Me />} />
         <Route path="/update_profile" element={<UpdateMechanic />} />
-        <Route path="/tickets/new" element={<CreateServiceTicket />} />
+        <Route path="/service_tickets" element={<CreateServiceTicket />} />
         <Route path="/tickets" element={<AllTickets />} />
         <Route path="/my_tickets" element={<MyTickets />} />
       </Routes>

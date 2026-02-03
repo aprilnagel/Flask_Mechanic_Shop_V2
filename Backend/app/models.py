@@ -61,7 +61,7 @@ class Service_Tickets(Base):
     #--------RELATIONSHIPS---------
     
     #many to one with customers
-    customer: Mapped[list["Customers"]] = relationship("Customers", back_populates="service_tickets_customer")
+    customer: Mapped["Customers"] = relationship("Customers", back_populates="service_tickets_customer")
     
     #many to many with mechanics
     mechanics_service_tickets: Mapped[list["Mechanics"]] = relationship("Mechanics", secondary=mechanic_service_ticket, back_populates="service_tickets_mechanics")

@@ -2,12 +2,12 @@ import { useState } from "react";
 import { useAuth } from "../contexts/Auth";
 import { useNavigate } from "react-router-dom";
 import { API_BASE_URL } from "../config";
+import BackToProfile from "../components/Back To Profile/BackToProfile";
 
 export default function UpdateMechanic() {
   const { mechanic, setMechanic, token } = useAuth();
   const navigate = useNavigate();
 
-  // Wait until mechanic is loaded
   if (!mechanic) {
     return <p>Loading profile...</p>;
   }
@@ -36,16 +36,31 @@ export default function UpdateMechanic() {
     setError("");
     setSuccess("");
 
-    // Build partial update body
+    // Build update payload ONLY with fields that changed
     const body = {};
-    for (const key in formData) {
-      if (formData[key] !== "" && formData[key] !== mechanic[key]) {
-        body[key] = formData[key];
-      }
+
+    if (formData.first_name !== mechanic.first_name)
+      body.first_name = formData.first_name;
+
+    if (formData.last_name !== mechanic.last_name)
+      body.last_name = formData.last_name;
+
+    if (formData.email !== mechanic.email)
+      body.email = formData.email;
+
+    if (formData.phone !== mechanic.phone)
+      body.phone = formData.phone;
+
+    if (formData.specialty !== mechanic.specialty)
+      body.specialty = formData.specialty;
+
+    // Only send password if user typed something
+    if (formData.password.trim() !== "") {
+      body.password = formData.password;
     }
 
     try {
-      const res = await fetch(`${API_BASE_URL}/mechanics/update`, {
+      const res = await fetch(`${API_BASE_URL}/mechanics`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -62,14 +77,9 @@ export default function UpdateMechanic() {
 
       const updated = await res.json();
       setMechanic(updated);
-
-      // Show success message under button
       setSuccess("Profile updated successfully!");
 
-      // Redirect after a moment
-      setTimeout(() => {
-        navigate("/profile", { state: { success: "Profile updated!" } });
-      }, 1000);
+      
 
     } catch (err) {
       setError("Server error. Please try again later.");
@@ -77,7 +87,7 @@ export default function UpdateMechanic() {
   }
 
   return (
-    <div className="update-page">
+    <div className="update-page ticket-details-page page-with-floating-button">
       <h2 className="page-title">Update Profile</h2>
 
       <form className="update-form" onSubmit={handleSubmit}>
@@ -127,11 +137,12 @@ export default function UpdateMechanic() {
         <button type="submit" className="update-btn">
           Save Changes
         </button>
+        
 
-        {/* Confirmation + error messages directly under button */}
         {success && <p className="success">{success}</p>}
         {error && <p className="error">{error}</p>}
       </form>
+      <BackToProfile />
     </div>
   );
 }

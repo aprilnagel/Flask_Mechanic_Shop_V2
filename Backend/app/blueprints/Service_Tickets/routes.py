@@ -12,21 +12,17 @@ from app.extensions import limiter, cache
 @service_tickets_bp.route('', methods=['POST'])
 @token_required
 @mechanic_required
-
 def create_service_ticket():
-    #Validate and Deserialize the data
     try:
-        service_ticket_data = service_ticket_schema.load(request.json)
+        service_ticket_data = service_ticket_schema.load(request.json)  # returns dict now
     except ValidationError as e:
         return jsonify({"message": e.messages}), 400
-    
-    #Create a new Service Ticket object
+
     new_service_ticket = Service_Tickets(**service_ticket_data)
-    
-    #Add to the database
+
     db.session.add(new_service_ticket)
     db.session.commit()
-    
+
     return service_ticket_schema.jsonify(new_service_ticket), 201
 
 
