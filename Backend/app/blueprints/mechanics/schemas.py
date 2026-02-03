@@ -51,3 +51,12 @@ class MechanicDumpSchema(ma.SQLAlchemyAutoSchema):
 
 mechanic_schema = MechanicDumpSchema()
 mechanics_schema = MechanicDumpSchema(many=True)
+
+# -----------------------------
+# Login Schema (needed by routes + tests)
+# -----------------------------
+class LoginMechanicSchema(Schema):
+    email = fields.Email(required=True)
+    password = fields.String(required=True)
+
+login_mechanic_schema = LoginMechanicSchema()
