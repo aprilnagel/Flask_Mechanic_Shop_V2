@@ -117,7 +117,7 @@ export default function AllTickets() {
 
   // Status counts
   const total = tickets.length;
-  const open = tickets.filter((t) => t.status === "Open").length;
+  const pending = tickets.filter((t) => t.status === "Pending").length;
   const inProgress = tickets.filter((t) => t.status === "In Progress").length;
   const completed = tickets.filter((t) => t.status === "Completed").length;
   const unassigned = tickets.filter((t) => t.mechanics.length === 0).length;
@@ -136,7 +136,7 @@ export default function AllTickets() {
 
       <div className="ticket-counts">
         <span>Total: {total}</span>
-        <span>Open: {open}</span>
+        <span>Open: {pending}</span>
         <span>In Progress: {inProgress}</span>
         <span>Completed: {completed}</span>
         <span>Unassigned: {unassigned}</span>
@@ -144,7 +144,7 @@ export default function AllTickets() {
 
       <div className="ticket-filters">
         <button className={filter === "All" ? "active" : ""} onClick={() => setFilter("All")}>All</button>
-        <button className={filter === "Open" ? "active" : ""} onClick={() => setFilter("Open")}>Open</button>
+        <button className={filter === "Pending" ? "active" : ""} onClick={() => setFilter("Pending")}>Pending</button>
         <button className={filter === "In Progress" ? "active" : ""} onClick={() => setFilter("In Progress")}>In Progress</button>
         <button className={filter === "Completed" ? "active" : ""} onClick={() => setFilter("Completed")}>Completed</button>
         <button className={filter === "Unassigned" ? "active" : ""} onClick={() => setFilter("Unassigned")}>Unassigned</button>

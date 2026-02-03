@@ -55,14 +55,14 @@ const TicketCard = ({
 
             <button
               className="reopen-btn"
-              onClick={() => onStatusChange(ticket.id, "Open")}
+              onClick={() => onStatusChange(ticket.id, "Pending")}
             >
               Reopen
             </button>
           </div>
         )}
 
-        {ticket.status === "Open" && (
+        {ticket.status === "Pending" && (
           <button
             className="start-work-btn"
             onClick={() => onStatusChange(ticket.id, "In Progress")}

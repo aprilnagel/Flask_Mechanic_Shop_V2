@@ -61,7 +61,7 @@ export default function MyTickets() {
 
   // COUNTERS
   const total = tickets.length;
-  const open = tickets.filter((t) => t.status === "Open").length;
+  const pending = tickets.filter((t) => t.status === "Pending").length;
   const inProgress = tickets.filter((t) => t.status === "In Progress").length;
   const completed = tickets.filter((t) => t.status === "Completed").length;
 
@@ -74,7 +74,7 @@ export default function MyTickets() {
       {tickets.length > 0 && (
         <div className="ticket-counts">
           <span>Total: {total}</span>
-          <span>Open: {open}</span>
+          <span>Open: {pending}</span>
           <span>In Progress: {inProgress}</span>
           <span>Completed: {completed}</span>
         </div>
