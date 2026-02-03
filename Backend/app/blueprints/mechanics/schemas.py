@@ -5,23 +5,27 @@ from app.models import Mechanics
 
 # ------------------------------------------------------------
 #  MAIN MECHANIC SCHEMA
-#  - Used for create, update, get, list
-#  - Includes computed full name
-#  - Excludes password from output
-#  - Does NOT use load_instance=True (so .load() returns dict)
+#  - Accepts password on load
+#  - Hides password on dump
+#  - Adds computed full name
+#  - Returns dicts on .load()
 # ------------------------------------------------------------
 
 class MechanicSchema(ma.SQLAlchemyAutoSchema):
     # Computed full name for frontend display
     name = fields.Method("get_full_name", dump_only=True)
 
+    # Accept password on load, hide on dump
+    password = fields.String(load_only=True, required=True)
+
     def get_full_name(self, obj):
         return f"{obj.first_name} {obj.last_name}"
 
     class Meta:
         model = Mechanics
-        exclude = ("password",)   # never expose password
-        load_instance = False     # ensures .load() returns dicts
+        load_instance = False   # ensures .load() returns dicts
+        include_fk = True       # safe + helps with relationships
+        exclude = ()            # DO NOT exclude password here
 
 
 # Exported instances
@@ -32,8 +36,7 @@ mechanics_schema = MechanicSchema(many=True)
 # ------------------------------------------------------------
 #  LOGIN SCHEMA
 #  - Used ONLY for login
-#  - Fixes invalid login test
-#  - Avoids Marshmallow errors caused by MechanicSchema
+#  - Prevents Marshmallow from expecting extra fields
 # ------------------------------------------------------------
 
 class LoginMechanicSchema(Schema):
