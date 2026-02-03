@@ -171,3 +171,16 @@
   align-items: center;
   gap: 10px;
 }
+
+.remove-mech-btn {
+  background: #f44336; /* red */
+  border: none;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+.remove-mech-btn:hover {
+  opacity: 0.85;
+}
