@@ -16,8 +16,9 @@ from app.utility.auth import encode_token, mechanic_required, token_required
 def login_mechanic():
     try:
         data = login_mechanic_schema.load(request.json)
-    except ValidationError as err:
-        return jsonify(err.messages), 400
+    except ValidationError:
+        return jsonify({"message": "Invalid email or password"}), 400
+
     
     mechanic = db.session.query(Mechanics).filter_by(email=data['email']).first()
     
@@ -27,18 +28,9 @@ def login_mechanic():
     token = encode_token(mechanic.id, 'mechanic')
     
     return jsonify({
-        "message": f"Welcome {mechanic.first_name} {mechanic.last_name}!",
-        "token": token,
-        "mechanic": {
-            "id": mechanic.id,
-            "first_name": mechanic.first_name,
-            "last_name": mechanic.last_name,
-            "email": mechanic.email,
-            "phone": mechanic.phone,
-            "specialty": mechanic.specialty
-            
-        }
+        "token": token
     }), 200
+
 
     
 #_______________________#CREATE MECHANIC ROUTE________________________
@@ -71,11 +63,11 @@ def create_mechanic():
         "first_name": new_mechanic.first_name,
         "last_name": new_mechanic.last_name,
         "email": new_mechanic.email,
-        "password": new_mechanic.password,   
         "phone": new_mechanic.phone,
         "specialty": new_mechanic.specialty,
         "role": "mechanic"
     }), 201
+
 
 
 #________________________#READ MECHANICS ROUTES________________________
