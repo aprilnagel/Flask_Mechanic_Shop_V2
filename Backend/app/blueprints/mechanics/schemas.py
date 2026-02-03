@@ -13,6 +13,7 @@ class RegisterMechanicSchema(Schema):
     phone = fields.String(required=True)
     specialty = fields.String(required=True)
     password = fields.String(required=True)
+    role = fields.String(required=False)
 
 
 register_mechanic_schema = RegisterMechanicSchema()

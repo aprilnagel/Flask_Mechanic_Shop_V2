@@ -100,6 +100,23 @@ def get_mechanic(mechanic_id):
     return mechanic_schema.jsonify(mechanic), 200
 
 
+# ------------------------ DELETE MECHANIC ------------------------
+
+@mechanics_bp.route('/<int:mechanic_id>', methods=['DELETE'])
+@token_required
+@mechanic_required
+def delete_mechanic(mechanic_id):
+    mechanic = db.session.get(Mechanics, mechanic_id)
+
+    if not mechanic:
+        return jsonify({"message": "Mechanic not found"}), 404
+
+    db.session.delete(mechanic)
+    db.session.commit()
+
+    return jsonify({"message": f"Mechanic {mechanic_id} deleted successfully"}), 200
+
+
 # ------------------------ UPDATE MECHANIC ------------------------
 
 @mechanics_bp.route("", methods=["PUT"])
