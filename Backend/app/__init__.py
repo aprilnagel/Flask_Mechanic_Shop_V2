@@ -8,7 +8,6 @@ from .blueprints.Service_Tickets import service_tickets_bp
 from .blueprints.parts import parts_bp
 from flask_swagger_ui import get_swaggerui_blueprint
 
-
 SWAGGER_URL = '/api/docs'
 API_URL = '/static/swagger.yaml'
 
@@ -18,21 +17,18 @@ swagger_blueprint = get_swaggerui_blueprint(
     config={'app_name': "Bagel's Repair Shop API"}
 )
 
-
 def create_app(config_name):
     app = Flask(__name__)
     app.config.from_object(f'config.{config_name}')
 
+    # Extensions
     CORS(app)
-
     db.init_app(app)
     ma.init_app(app)
     limiter.init_app(app)
     cache.init_app(app)
 
-    with app.app_context():
-        db.create_all()
-
+    # Log DB URL for debugging
     print("USING DATABASE:", app.config["SQLALCHEMY_DATABASE_URI"])
 
     # Register Blueprints
@@ -43,5 +39,3 @@ def create_app(config_name):
     app.register_blueprint(swagger_blueprint, url_prefix=SWAGGER_URL)
 
     return app
-
-
