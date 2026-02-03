@@ -48,9 +48,10 @@ def create_app(config_name):
 # -------------------------------
 # TEMPORARY DATA MIGRATION ROUTE
 # -------------------------------
+@app.route("/fix_pending_to_open")
 @limiter.exempt
 def fix_pending_to_open():
     from .models import Service_Tickets
-    updated = Service_Tickets.query.filter_by(status="Pending").update({"status": "Open"})
+    updated = db.session.query(Service_Tickets).filter_by(status="Pending").update({"status": "Open"})
     db.session.commit()
     return f"Updated {updated} tickets from Pending to Open."
