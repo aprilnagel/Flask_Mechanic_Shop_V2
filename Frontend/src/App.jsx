@@ -20,7 +20,7 @@ export default function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/me" element={<Me />} />
-        <Route path="/update" element={<UpdateMechanic />} />
+        <Route path="/update_profile" element={<UpdateMechanic />} />
         <Route path="/tickets/new" element={<CreateServiceTicket />} />
         <Route path="/tickets" element={<AllTickets />} />
         <Route path="/my_tickets" element={<MyTickets />} />

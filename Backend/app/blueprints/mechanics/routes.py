@@ -1,6 +1,6 @@
 import token
 from app.blueprints.mechanics import mechanics_bp
-from .schemas import mechanic_schema, mechanics_schema, login_mechanic_schema
+from .schemas import mechanic_schema, mechanics_schema, login_mechanic_schema, mechanic_update_schema
 from flask import request, jsonify
 from marshmallow import ValidationError
 from app.models import db, Mechanics
@@ -117,33 +117,33 @@ def delete_mechanic(mechanic_id):
     return jsonify({"message": f"Mechanic deleted {mechanic_id}"}), 200
   
 
-#________________________#UPDATE A MECHANIC ROUTE________________________
+#________________________# UPDATE A MECHANIC ROUTE ________________________#
 
-@mechanics_bp.route("", methods=["PUT"]) #No ID in the route. Users can only update their own info. Please hash passwords on update as well.
-# @limiter.limit("500 per month") 
+@mechanics_bp.route("", methods=["PUT"])
 @token_required
 @mechanic_required
 def update_mechanic():
     mechanic_id = request.logged_in_user_id
-    mechanic = db.session.get(Mechanics, mechanic_id) #Query for our mechanic to update
-    
-    if not mechanic: #Checking if I got a mechanic with that id
+    mechanic = db.session.get(Mechanics, mechanic_id)
+
+    if not mechanic:
         return jsonify({"message": "Mechanic not found"}), 404
-    if str(mechanic.id) != request.logged_in_user_id:
-        return jsonify({"message": "You can only update your own account"}), 403
-    
-    #Validate and Deserialize the updates that they are sending in the body of the request
+
+    # Validate partial update using the UPDATE schema
     try:
-        mechanic_data = mechanic_schema.load(request.json, partial=True) #partial=True allows for partial updates
+        mechanic_data = mechanic_update_schema.load(request.json, partial=True)
     except ValidationError as err:
         return jsonify(err.messages), 400
-      
+
+    # Apply updates
     for key, value in mechanic_data.items():
-        if key == 'password':
+        if key == "password":
             value = generate_password_hash(value)
-        setattr(mechanic, key, value)  #Set the attribute on the mechanic instance
-    
-    db.session.commit() #Save the changes to the database
+        setattr(mechanic, key, value)
+
+    db.session.commit()
+
+    # Return safe dump schema (never returns password)
     return mechanic_schema.jsonify(mechanic), 200
 
 #____________________GET MY TICKETS ROUTE____________________

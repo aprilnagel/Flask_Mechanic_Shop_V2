@@ -1,7 +1,7 @@
-/* TICKET GRID FOR ALL TICKETS AND MY TICKETS PAGES */
+/* GRID FOR ALL TICKETS + MY TICKETS */
 .ticket-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 20px;
   margin-top: 20px;
 }
@@ -18,101 +18,119 @@
   }
 }
 
-/* TICKET FILTER BUTTONS */
-.ticket-filters {
-  display: flex;
-  gap: 10px;
-  margin: 20px 0;
-}
-
-.ticket-filters button {
-  flex: 1;
-}
-
-.ticket-filters button:hover {
-  opacity: 0.5;
-}
-
-.ticket-filters .active {
-  opacity: 0.8;
-}
-
-/* STATUS BUTTONS */
-.status-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-top: 12px;
-}
-
-.status-actions button {
-  width: 100%;
-}
-
-.status-actions button:hover {
-  opacity: 0.8;
-}
-
-/* TICKET CARD */
+/* MAIN TICKET CARD */
 .ticket-card {
   background: white;
-  padding: 15px;
-  border-radius: 10px;
+  padding: 20px;
+  border-radius: 12px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  border: 3px solid #4f46e5; /* matches your header color */
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 16px;
 }
 
-.ticket-card h3 {
-  margin-bottom: 10px;
+/* CENTERED TICKET ID */
+.ticket-id {
+  text-align: center;
+  font-size: 1.6rem;
   font-weight: 600;
+  margin-bottom: 5px;
 }
 
-/* MECHANICS SECTION */
-.mechanics-section {
-  margin-top: 10px;
+/* SECTION DIVIDERS */
+.ticket-section {
+  padding: 12px 0;
+  border-top: 1px solid #4f46e5; /* clean indigo divider */
 }
 
-.mechanic-list {
-  list-style: none;
-  padding-left: 0;
-  margin-top: 8px;
+.ticket-section:first-of-type {
+  border-top: none;
 }
 
-.mechanic-item {
-  background: #f3f4f6;
-  padding: 8px;
-  border-radius: 8px;
-  margin-bottom: 6px;
+/* ASSIGNED MECHANICS */
+.assigned-mechanics {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.assigned-mech-item {
+  padding: 4px 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  font-size: 0.95rem;
 }
 
-
-/* ASSIGN SECTION */
-.assign-section {
-  margin-top: 16px;
+/* STATUS AREA */
+.status-section {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+/* COMPLETED SECTION — stacked + centered */
+.completed-section {
+  display: flex;
+  flex-direction: column;
   align-items: center;
   gap: 10px;
 }
 
-.assign-section input {
+/* COMPLETED BADGE (green pill) */
+.completed-badge {
+  display: inline-block;
+  background: #4caf50;
+  color: white;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+/* BUTTONS (override global styles) */
+.start-work-btn,
+.mark-complete-btn,
+.reopen-btn {
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+  border: none;
+}
+
+/* BUTTON COLORS */
+.start-work-btn,
+.mark-complete-btn {
+  background: #4caf50;
+}
+
+.reopen-btn {
+  background: #ff9800;
+}
+
+.start-work-btn:hover,
+.mark-complete-btn:hover,
+.reopen-btn:hover {
+  opacity: 0.85;
+}
+
+/* ASSIGN MECHANIC DROPDOWN */
+.assign-section {
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+}
+
+.assign-section select {
   padding: 8px 10px;
   border-radius: 6px;
   border: 1px solid #ccc;
-  width: 120px;
-  text-align: center;
-}
-
-/* TICKET LISTS */
-.styled-list-item {
   background: white;
-  padding: 15px;
-  border-radius: 10px;
-  margin-bottom: 12px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  width: 180px;
 }

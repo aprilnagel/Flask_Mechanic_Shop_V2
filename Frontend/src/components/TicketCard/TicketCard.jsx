@@ -1,61 +1,108 @@
-export default function TicketCard({ ticket, onAssign, onRemove, onStatusChange }) {
+import React from "react";
+import "./TicketCard.css";
+
+const TicketCard = ({
+  ticket,
+  assignMechanic,
+  removeMechanic,
+  mechanics,
+  showAssignControls = false,
+  onStatusChange,
+}) => {
   return (
     <div className="ticket-card">
-      <h3>Ticket #{ticket.id}</h3>
 
-      <p><strong>Status:</strong> {ticket.status}</p>
-      <p><strong>Customer:</strong> {ticket.customer_name}</p>
-      <p><strong>Vehicle:</strong> {ticket.vehicle}</p>
-      <p><strong>Description:</strong> {ticket.description}</p>
+      {/* Centered Ticket ID */}
+      <h3 className="ticket-id">Ticket #{ticket.id}</h3>
 
-      {/* Assigned mechanics */}
-      {ticket.mechanics && ticket.mechanics.length > 0 ? (
-        <div>
-          <strong>Assigned Mechanics:</strong>
-          <ul className="mechanic-list">
-            {ticket.mechanics.map((m) => (
-              <li key={m.id} className="mechanic-item">
-                {m.name}
-                {onRemove && (
-                  <button onClick={() => onRemove(ticket.id, m.id)}>Remove</button>
-                )}
-              </li>
-            ))}
-          </ul>
-        </div>
-      ) : (
-        <p><em>No mechanics assigned</em></p>
-      )}
+      {/* VEHICLE + SERVICE INFO */}
+      <div className="ticket-section">
+        <p><strong>Vehicle Make:</strong> {ticket.vehicle_make}</p>
+        <p><strong>Vehicle Model:</strong> {ticket.vehicle_model}</p>
+        <p><strong>Vehicle Year:</strong> {ticket.vehicle_year}</p>
+        <p><strong>Service Description:</strong> {ticket.service_description}</p>
+      </div>
 
-      {/* Admin assign controls (AllTickets only) */}
-      {onAssign && (
-        <button onClick={() => onAssign(ticket.id, prompt("Mechanic ID:"))}>
-          Assign Mechanic
-        </button>
-      )}
+      {/* ASSIGNED MECHANICS */}
+      <div className="ticket-section">
+        <strong>Assigned Mechanics:</strong>
 
-      {/* Mechanic status controls (MyTickets only) */}
-      {onStatusChange && (
-        <div className="status-actions">
-          {ticket.status !== "In Progress" && (
-            <button onClick={() => onStatusChange(ticket.id, "In Progress")}>
-              Start Work
-            </button>
-          )}
+        {ticket.mechanics && ticket.mechanics.length > 0 ? (
+          ticket.mechanics.map((mech) => (
+            <div key={mech.id} className="assigned-mech-item">
+              ID: #{mech.id} - {mech.name}
+              {showAssignControls && (
+                <button
+                  className="remove-mech-btn"
+                  onClick={() => removeMechanic(ticket.id, mech.id)}
+                >
+                  Remove
+                </button>
+              )}
+            </div>
+          ))
+        ) : (
+          <p>No mechanics assigned</p>
+        )}
+      </div>
 
-          {ticket.status !== "Completed" && (
-            <button onClick={() => onStatusChange(ticket.id, "Completed")}>
-              Mark Complete
-            </button>
-          )}
+      {/* STATUS SECTION */}
+      <div className="ticket-section status-section">
 
-          {ticket.status !== "Pending" && (
-            <button onClick={() => onStatusChange(ticket.id, "Pending")}>
+        {ticket.status === "Completed" && (
+          <div className="completed-section">
+            <span className="completed-badge">✓ Completed</span>
+
+            <button
+              className="reopen-btn"
+              onClick={() => onStatusChange(ticket.id, "Open")}
+            >
               Reopen
             </button>
-          )}
+          </div>
+        )}
+
+        {ticket.status === "Open" && (
+          <button
+            className="start-work-btn"
+            onClick={() => onStatusChange(ticket.id, "In Progress")}
+          >
+            Start Work
+          </button>
+        )}
+
+        {ticket.status === "In Progress" && (
+          <button
+            className="mark-complete-btn"
+            onClick={() => onStatusChange(ticket.id, "Completed")}
+          >
+            Mark Complete
+          </button>
+        )}
+      </div>
+
+      {/* ASSIGN MECHANIC DROPDOWN */}
+      {showAssignControls && (
+        <div className="assign-section">
+          <select
+            onChange={(e) => assignMechanic(ticket.id, e.target.value)}
+            defaultValue=""
+          >
+            <option value="" disabled>
+              Assign a mechanic
+            </option>
+
+            {mechanics.map((mech) => (
+              <option key={mech.id} value={mech.id}>
+                ID: #{mech.id} - {mech.name}
+              </option>
+            ))}
+          </select>
         </div>
       )}
+
     </div>
   );
-}
+};
+
+export default TicketCard;

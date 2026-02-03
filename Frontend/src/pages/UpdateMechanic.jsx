@@ -7,13 +7,18 @@ export default function UpdateMechanic() {
   const { mechanic, setMechanic, token } = useAuth();
   const navigate = useNavigate();
 
+  // Wait until mechanic is loaded
+  if (!mechanic) {
+    return <p>Loading profile...</p>;
+  }
+
   const [formData, setFormData] = useState({
-    first_name: mechanic?.first_name || "",
-    last_name: mechanic?.last_name || "",
-    email: mechanic?.email || "",
-    phone: mechanic?.phone || "",
-    specialty: mechanic?.specialty || "",
-    password: ""   // optional — only send if user enters one
+    first_name: mechanic.first_name,
+    last_name: mechanic.last_name,
+    email: mechanic.email,
+    phone: mechanic.phone,
+    specialty: mechanic.specialty,
+    password: ""
   });
 
   const [error, setError] = useState("");
@@ -31,10 +36,10 @@ export default function UpdateMechanic() {
     setError("");
     setSuccess("");
 
-    // Build a body with ONLY the fields the user filled in
+    // Build partial update body
     const body = {};
     for (const key in formData) {
-      if (formData[key] !== "") {
+      if (formData[key] !== "" && formData[key] !== mechanic[key]) {
         body[key] = formData[key];
       }
     }
@@ -50,18 +55,21 @@ export default function UpdateMechanic() {
       });
 
       if (!res.ok) {
-        setError("Update failed. Please try again.");
+        const err = await res.json();
+        setError(err.message || "Update failed. Please try again.");
         return;
       }
 
       const updated = await res.json();
       setMechanic(updated);
 
+      // Show success message under button
       setSuccess("Profile updated successfully!");
 
+      // Redirect after a moment
       setTimeout(() => {
         navigate("/profile", { state: { success: "Profile updated!" } });
-      }, 800);
+      }, 1000);
 
     } catch (err) {
       setError("Server error. Please try again later.");
@@ -69,49 +77,46 @@ export default function UpdateMechanic() {
   }
 
   return (
-    <div>
-      <h2>Update Profile</h2>
+    <div className="update-page">
+      <h2 className="page-title">Update Profile</h2>
 
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      {success && <p style={{ color: "green" }}>{success}</p>}
-
-      <form onSubmit={handleSubmit}>
-        <label>First Name:</label>
+      <form className="update-form" onSubmit={handleSubmit}>
+        <label>First Name</label>
         <input
           name="first_name"
           value={formData.first_name}
           onChange={handleChange}
         />
 
-        <label>Last Name:</label>
+        <label>Last Name</label>
         <input
           name="last_name"
           value={formData.last_name}
           onChange={handleChange}
         />
 
-        <label>Email:</label>
+        <label>Email</label>
         <input
           name="email"
           value={formData.email}
           onChange={handleChange}
         />
 
-        <label>Phone:</label>
+        <label>Phone</label>
         <input
           name="phone"
           value={formData.phone}
           onChange={handleChange}
         />
 
-        <label>Specialty:</label>
+        <label>Specialty</label>
         <input
           name="specialty"
           value={formData.specialty}
           onChange={handleChange}
         />
 
-        <label>Password (optional):</label>
+        <label>Password (optional)</label>
         <input
           type="password"
           name="password"
@@ -119,7 +124,13 @@ export default function UpdateMechanic() {
           onChange={handleChange}
         />
 
-        <button type="submit">Save Changes</button>
+        <button type="submit" className="update-btn">
+          Save Changes
+        </button>
+
+        {/* Confirmation + error messages directly under button */}
+        {success && <p className="success">{success}</p>}
+        {error && <p className="error">{error}</p>}
       </form>
     </div>
   );

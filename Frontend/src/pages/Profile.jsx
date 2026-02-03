@@ -60,8 +60,8 @@ export default function Profile() {
       <div className="profile-actions">
         <button onClick={() => navigate("/tickets")}>View All Tickets</button>
         <button onClick={() => navigate("/my_tickets")}>My Tickets</button>
-        <button onClick={() => navigate("/update-profile")}>Update Profile</button>
-        <button onClick={() => navigate("/create-ticket")}>Create Ticket</button>
+        <button onClick={() => navigate("/update_profile")}>Update Profile</button>
+        <button onClick={() => navigate("/create_ticket")}>Create Ticket</button>
         <button className="danger" onClick={logout}>Logout</button>
       </div>
     </div>

@@ -46,7 +46,7 @@ export default function AllTickets() {
             service_ticket_id: ticketId,
             mechanic_id: mechanicId,
           }),
-        },
+        }
       );
 
       if (res.ok) {
@@ -74,7 +74,7 @@ export default function AllTickets() {
             service_ticket_id: ticketId,
             mechanic_id: mechanicId,
           }),
-        },
+        }
       );
 
       if (res.ok) {
@@ -94,6 +94,7 @@ export default function AllTickets() {
   }
 
   // Status counts
+  const total = tickets.length;
   const pending = tickets.filter((t) => t.status === "Pending").length;
   const inProgress = tickets.filter((t) => t.status === "In Progress").length;
   const completed = tickets.filter((t) => t.status === "Completed").length;
@@ -108,16 +109,19 @@ export default function AllTickets() {
 
   return (
     <div>
-      <h2>All Service Tickets</h2>
+      {/* PAGE TITLE */}
+      <h2 className="page-title">All Service Tickets</h2>
 
-      {/* Status Summary */}
-      <p>Total Tickets: {tickets.length}</p>
-      <p>Pending: {pending}</p>
-      <p>In Progress: {inProgress}</p>
-      <p>Completed: {completed}</p>
-      <p>Unassigned: {unassigned}</p>
+      {/* COUNTERS */}
+      <div className="ticket-counts">
+        <span>Total: {total}</span>
+        <span>Pending: {pending}</span>
+        <span>In Progress: {inProgress}</span>
+        <span>Completed: {completed}</span>
+        <span>Unassigned: {unassigned}</span>
+      </div>
 
-      {/* Filter Buttons */}
+      {/* FILTER BUTTONS */}
       <div className="ticket-filters">
         <button
           className={filter === "All" ? "active" : ""}
@@ -155,7 +159,7 @@ export default function AllTickets() {
         </button>
       </div>
 
-      {/* Ticket Grid */}
+      {/* TICKET GRID */}
       {filteredTickets.length === 0 ? (
         <p>No tickets match this filter.</p>
       ) : (

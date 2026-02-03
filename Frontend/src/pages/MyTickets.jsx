@@ -57,10 +57,28 @@ export default function MyTickets() {
 
   if (loading) return <p>Loading your tickets...</p>;
 
+  // COUNTERS
+  const total = tickets.length;
+  const open = tickets.filter((t) => t.status === "Open").length;
+  const inProgress = tickets.filter((t) => t.status === "In Progress").length;
+  const completed = tickets.filter((t) => t.status === "Completed").length;
+
   return (
     <div>
-      <h2>My Tickets</h2>
+      {/* PAGE TITLE */}
+      <h2 className="page-title">My Tickets</h2>
 
+      {/* COUNTERS */}
+      {tickets.length > 0 && (
+        <div className="ticket-counts">
+          <span>Total: {total}</span>
+          <span>Open: {open}</span>
+          <span>In Progress: {inProgress}</span>
+          <span>Completed: {completed}</span>
+        </div>
+      )}
+
+      {/* TICKET GRID */}
       {tickets.length === 0 ? (
         <p>You have no assigned tickets.</p>
       ) : (
@@ -69,7 +87,7 @@ export default function MyTickets() {
             <TicketCard
               key={t.id}
               ticket={t}
-              onStatusChange={updateStatus}  
+              onStatusChange={updateStatus}
             />
           ))}
         </div>

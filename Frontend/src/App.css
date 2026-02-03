@@ -59,6 +59,9 @@ input {
 button.danger {
   background: #dc2672; /* red-600 */
 }
+button.danger:hover {
+  background: #b91c1c; /* red-700 */
+}
  
 
 /* PROFILE PAGE */
@@ -143,10 +146,78 @@ button.danger {
   width: 100%;
 }
 
+/* PAGE TITLE */
+.page-title {
+  text-align: center;
+  margin-bottom: 25px;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+/* MY TICKETS TICKET COUNTS */
+.ticket-counts {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-bottom: 20px;
+  font-weight: 600;
+  color: #4f46e5;
+}
+
+/* TICKET FILTERS */
+.ticket-filters {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 32px;              /* more breathing room between buttons */
+  margin: 10px auto 25px auto;
+  padding: 0 20px;        /* widens the visual footprint */
+  max-width: 700px;       /* matches the visual width of the counters */
+  text-align: center;
+}
 
 
 
+.ticket-filters button:hover {
+  background: #d1d5db;
+}
 
+.ticket-filters button.active {
+  background: #252064;
+  color: white;
+}
 
+/*UPDATE PAGE*/
+.update-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 30px;
+}
 
+.update-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 260px;        /* consistent with login/register */
+  margin: 0 auto;
+}
 
+.update-form input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.update-btn {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+}
+
+.error,
+.success {
+  text-align: center;
+  margin-bottom: 10px;
+}
