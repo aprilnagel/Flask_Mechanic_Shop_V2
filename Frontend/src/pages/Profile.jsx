@@ -2,11 +2,13 @@ import { useAuth } from "../contexts/Auth";
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { API_BASE_URL } from "../config";
+import ConfirmDeleteModal from "../components/ConfirmDelete/ConfirmDelete";
 
 export default function Profile() {
   const { mechanic, token, logout } = useAuth();
   const navigate = useNavigate();
   const [myTickets, setMyTickets] = useState([]);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   useEffect(() => {
     async function fetchMyTickets() {
@@ -39,65 +41,88 @@ export default function Profile() {
   }
 
   const activeTickets = myTickets.filter(
-    (t) => t.status === "Open" || t.status === "In Progress"
+    (t) => t.status === "Open" || t.status === "In Progress",
   ).length;
 
   async function handleDeleteAccount() {
-  const confirmed = window.confirm(
-    "Are you sure you want to delete your account? This cannot be undone."
-  );
+    setShowDeleteModal(false);
 
-  if (!confirmed) return;
+    try {
+      const res = await fetch(`${API_BASE_URL}/mechanics/${mechanic.id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-  try {
-    const res = await fetch(`${API_BASE_URL}/mechanics/${mechanic.id}`, {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+      if (!res.ok) {
+        alert("Failed to delete account.");
+        return;
+      }
 
-    if (!res.ok) {
-      alert("Failed to delete account.");
-      return;
+      logout();
+      navigate("/login");
+    } catch (err) {
+      console.error("Error deleting account:", err);
+      alert("Server error. Try again later.");
     }
-
-    logout();
-    navigate("/login");
-
-  } catch (err) {
-    console.error("Error deleting account:", err);
-    alert("Server error. Try again later.");
   }
-}
 
   return (
     <div className="profile-page">
       <h2 className="page-title">Your Profile</h2>
 
       <div className="profile-card">
-        <p><strong>ID:</strong> {mechanic.id}</p>
-        <p><strong>Name:</strong> {mechanic.first_name} {mechanic.last_name}</p>
-        <p><strong>Email:</strong> {mechanic.email}</p>
-        <p><strong>Phone:</strong> {mechanic.phone}</p>
-        <p><strong>Specialty:</strong> {mechanic.specialty}</p>
+        <p>
+          <strong>ID:</strong> {mechanic.id}
+        </p>
+        <p>
+          <strong>Name:</strong> {mechanic.first_name} {mechanic.last_name}
+        </p>
+        <p>
+          <strong>Email:</strong> {mechanic.email}
+        </p>
+        <p>
+          <strong>Phone:</strong> {mechanic.phone}
+        </p>
+        <p>
+          <strong>Specialty:</strong> {mechanic.specialty}
+        </p>
 
         <hr />
 
-        <p><strong>Total Assigned Tickets:</strong> {myTickets.length}</p>
-        <p><strong>Active Tickets:</strong> {activeTickets}</p>
+        <p>
+          <strong>Total Assigned Tickets:</strong> {myTickets.length}
+        </p>
+        <p>
+          <strong>Active Tickets:</strong> {activeTickets}
+        </p>
       </div>
 
       <div className="profile-actions">
         <button onClick={() => navigate("/tickets")}>View All Tickets</button>
         <button onClick={() => navigate("/my_tickets")}>My Tickets</button>
-        <button onClick={() => navigate("/update_profile")}>Update Profile</button>
-        <button onClick={() => navigate("/service_tickets")}>Create Ticket</button>
-        <button className="danger" onClick={logout}>Logout</button>
-        <button className="danger" onClick={handleDeleteAccount}>
+        <button onClick={() => navigate("/update_profile")}>
+          Update Profile
+        </button>
+        <button onClick={() => navigate("/service_tickets")}>
+          Create Ticket
+        </button>
+        <button className="danger" onClick={logout}>
+          Logout
+        </button>
+
+        {/* FIXED BUTTON — opens modal instead of deleting */}
+        <button className="danger" onClick={() => setShowDeleteModal(true)}>
           Delete Account
         </button>
       </div>
+
+      <ConfirmDeleteModal
+        open={showDeleteModal}
+        onCancel={() => setShowDeleteModal(false)}
+        onConfirm={handleDeleteAccount}
+      />
     </div>
   );
 }

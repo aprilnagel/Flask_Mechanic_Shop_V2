@@ -60,7 +60,7 @@ button.danger {
   background: #dc2672; /* red-600 */
 }
 button.danger:hover {
-  background: #b91c1c; /* red-700 */
+  opacity: 0.6;
 }
  
 
@@ -258,10 +258,6 @@ button.danger:hover {
   cursor: pointer;
   appearance: none;
 }
-
-
-
-
 
 .create-ticket-form select:disabled {
   background: #f0f0f0;

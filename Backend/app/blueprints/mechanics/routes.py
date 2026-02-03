@@ -8,7 +8,7 @@ from .schemas import (
 )
 from flask import request, jsonify
 from marshmallow import ValidationError
-from app.models import db, Mechanics
+from app.models import db, Mechanics, mechanic_service_tickets
 from werkzeug.security import generate_password_hash, check_password_hash
 from app.utility.auth import encode_token, mechanic_required, token_required
 
@@ -112,10 +112,14 @@ def delete_mechanic(mechanic_id):
         return jsonify({"message": "Mechanic not found"}), 404
 
     try:
-        # Remove mechanic from all assigned tickets (many-to-many cleanup)
-        mechanic.tickets.clear()
+        # Remove mechanic from all assigned tickets (join table cleanup)
+        db.session.execute(
+            mechanic_service_tickets.delete().where(
+                mechanic_service_tickets.c.mechanic_id == mechanic_id
+            )
+        )
 
-        # Delete mechanic profile
+        # Delete the mechanic record
         db.session.delete(mechanic)
         db.session.commit()
 
