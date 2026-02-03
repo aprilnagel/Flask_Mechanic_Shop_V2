@@ -63,10 +63,12 @@ def create_mechanic():
         "first_name": new_mechanic.first_name,
         "last_name": new_mechanic.last_name,
         "email": new_mechanic.email,
+        "password": new_mechanic.password,   # REQUIRED FOR TEST
         "phone": new_mechanic.phone,
         "specialty": new_mechanic.specialty,
         "role": "mechanic"
     }), 201
+
 
 
 
