@@ -8,7 +8,7 @@ from .schemas import (
 )
 from flask import request, jsonify
 from marshmallow import ValidationError
-from app.models import db, Mechanics, mechanic_service_tickets
+from app.models import db, Mechanics, mechanic_service_ticket
 from werkzeug.security import generate_password_hash, check_password_hash
 from app.utility.auth import encode_token, mechanic_required, token_required
 
@@ -114,8 +114,8 @@ def delete_mechanic(mechanic_id):
     try:
         # Remove mechanic from all assigned tickets (join table cleanup)
         db.session.execute(
-            mechanic_service_tickets.delete().where(
-                mechanic_service_tickets.c.mechanic_id == mechanic_id
+            mechanic_service_ticket.delete().where(
+                mechanic_service_ticket.c.mechanic_id == mechanic_id
             )
         )
 
