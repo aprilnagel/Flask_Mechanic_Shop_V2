@@ -305,3 +305,37 @@ button.danger:hover {
   border-radius: 8px;
   font-size: 16px;
 }
+
+.success-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.success-box {
+  background: white;
+  padding: 28px;
+  border-radius: 12px;
+  text-align: center;
+  width: 90%;
+  max-width: 360px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+
+.success-icon {
+  font-size: 48px;
+  color: #2e7d32;
+  margin-bottom: 10px;
+}
+
+.success-box button {
+  margin-top: 18px;
+  padding: 10px 16px;
+  border-radius: 8px;
+  background: #1976d2;
+  color: white;
+}

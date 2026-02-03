@@ -52,7 +52,7 @@ class Service_Tickets(Base):
     service_description: Mapped[str] = mapped_column(String(500), nullable=False)
     date_created: Mapped[date] = mapped_column(Date, default=date.today, nullable=False)
     price: Mapped[float] = mapped_column(Float, default=0.0, nullable=True)
-    status: Mapped[str] = mapped_column(String(50), nullable=False, default="Pending")
+    status: Mapped[str] = mapped_column(String(50), nullable=False, default="Open")
     parts: Mapped[str] = mapped_column(String(500), nullable=True)
     completion_date: Mapped[date] = mapped_column(Date, nullable=True)
 

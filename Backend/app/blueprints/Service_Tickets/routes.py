@@ -1,12 +1,19 @@
 from app.utility.auth import mechanic_required, token_required
 from . import service_tickets_bp
 from .schemas import service_ticket_schema, service_tickets_schema
-from flask import request, jsonify
+from flask import app, request, jsonify
 from marshmallow import ValidationError
 from app.models import Customers, Mechanics, db, Service_Tickets, Parts, Service_Ticket_Parts
 from app.extensions import limiter, cache
 
+@app.route("/fix_pending_to_open")
+def fix_pending_to_open():
+    from models import Service_Tickets  # adjust if needed
 
+    updated = Service_Tickets.query.filter_by(status="Pending").update({"status": "Open"})
+    db.session.commit()
+
+    return f"Updated {updated} tickets from Pending to Open."
 #__________________CREATE SERVICE TICKET ROUTE____________________#
 
 @service_tickets_bp.route('', methods=['POST'])

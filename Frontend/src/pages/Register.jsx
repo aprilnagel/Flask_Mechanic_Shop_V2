@@ -16,6 +16,7 @@ export default function Register() {
 
   const [message, setMessage] = useState("");
   const [isError, setIsError] = useState(false);
+  const [regSuccess, setRegSuccess] = useState(false);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -25,6 +26,7 @@ export default function Register() {
     e.preventDefault();
     setMessage("");
     setIsError(false);
+    setRegSuccess(false);
 
     try {
       const res = await fetch(`${API_BASE_URL}/mechanics`, {
@@ -42,8 +44,8 @@ export default function Register() {
         return;
       }
 
-      // Success
-      setMessage("Registration successful!");
+      // Success popup
+      setRegSuccess(true);
 
     } catch (error) {
       console.error("Error registering mechanic:", error);
@@ -57,11 +59,9 @@ export default function Register() {
       <form className="register-form" onSubmit={handleSubmit}>
         <h2>Register Mechanic</h2>
 
-        {message && (
-          <p
-            className="register-message"
-            style={{ color: isError ? "#dc2626" : "#4f46e5" }}
-          >
+        {/* Only show errors inline */}
+        {isError && (
+          <p className="register-message" style={{ color: "#dc2626" }}>
             {message}
           </p>
         )}
@@ -112,19 +112,22 @@ export default function Register() {
         <button className="register-btn" type="submit">
           Register
         </button>
-
-        {/* Show Back to Login ONLY after successful registration */}
-        {!isError && message === "Registration successful!" && (
-          <button
-            type="button"
-            className="register-btn"
-            style={{ background: "#6b7280" }}
-            onClick={() => navigate("/login")}
-          >
-            Back to Login
-          </button>
-        )}
       </form>
+
+      {/* SUCCESS POPUP */}
+      {regSuccess && (
+        <div className="success-overlay">
+          <div className="success-box">
+            <div className="success-icon">✓</div>
+            <h3>Registration Successful</h3>
+            <p>Your mechanic account has been created.</p>
+
+            <button onClick={() => navigate("/login")}>
+              Go to Login
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
