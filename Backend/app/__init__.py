@@ -9,6 +9,7 @@ from .blueprints.parts import parts_bp
 from flask_swagger_ui import get_swaggerui_blueprint
 
 
+
 SWAGGER_URL = '/api/docs'  # URL for exposing Swagger UI (without trailing '/')
 API_URL = '/static/swagger.yaml'  # Our API url (can of course be a local resource)
 
@@ -40,6 +41,11 @@ def create_app(config_name):
     app.register_blueprint(parts_bp, url_prefix='/parts')
     app.register_blueprint(swagger_blueprint, url_prefix=SWAGGER_URL)
     
-    
-    
+    @app.route("/fix_pending_to_open")
+    def fix_pending_to_open():
+        from app.models import Service_Tickets
+        updated = Service_Tickets.query.filter_by(status="Pending").update({"status": "Open"})
+        db.session.commit()
+        return f"Updated {updated} tickets from Pending to Open."
+
     return app
