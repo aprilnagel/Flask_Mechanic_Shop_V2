@@ -92,11 +92,13 @@ const TicketCard = ({
               Assign a mechanic
             </option>
 
-            {mechanics.map((mech) => (
-              <option key={mech.id} value={mech.id}>
-                ID: #{mech.id} - {mech.name}
-              </option>
-            ))}
+            {[...mechanics]
+              .sort((a, b) => a.id - b.id)
+              .map((mech) => (
+                <option key={mech.id} value={mech.id}>
+                  ID: #{mech.id} - {mech.name}
+                </option>
+              ))}
           </select>
         </div>
       )}

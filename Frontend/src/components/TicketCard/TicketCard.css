@@ -62,6 +62,11 @@
   align-items: center;
   font-size: 0.95rem;
 }
+.assign-section {
+  margin-top: auto;   /* pushes it to the bottom */
+  padding-bottom: 12px; /* small gap from bottom */
+}
+
 
 /* STATUS AREA */
 .status-section {

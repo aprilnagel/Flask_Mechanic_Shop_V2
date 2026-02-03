@@ -267,3 +267,45 @@ button.danger:hover {
   background: #f0f0f0;
   color: #666;
 }
+
+/*PROFILE PAGE */
+.profile-page {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.page-title {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.profile-card {
+  background: #fff;
+  padding: 20px 24px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  margin-bottom: 32px;
+}
+
+.profile-card p {
+  margin: 10px 0;
+}
+
+.profile-card hr {
+  margin: 20px 0;
+  border: none;
+  border-top: 1px solid #eee;
+}
+
+.profile-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.profile-actions button {
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 16px;
+}

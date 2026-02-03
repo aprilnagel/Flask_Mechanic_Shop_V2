@@ -7,17 +7,16 @@ import BackToProfile from "../components/Back To Profile/BackToProfile";
 export default function AllTickets() {
   const { token } = useAuth();
   const [tickets, setTickets] = useState([]);
+  const [mechanics, setMechanics] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("All");
 
-  // Fetch all tickets
+  // Fetch tickets
   useEffect(() => {
     async function fetchTickets() {
       try {
         const res = await fetch(`${API_BASE_URL}/service_tickets`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         });
 
         const data = await res.json();
@@ -32,26 +31,46 @@ export default function AllTickets() {
     fetchTickets();
   }, [token]);
 
+  // Fetch mechanics
+  useEffect(() => {
+    async function fetchMechanics() {
+      try {
+        const res = await fetch(`${API_BASE_URL}/mechanics`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        const data = await res.json();
+        setMechanics(data);
+      } catch (err) {
+        console.error("Error fetching mechanics:", err);
+      }
+    }
+
+    fetchMechanics();
+  }, [token]);
+
   // Assign mechanic
   async function assignMechanic(ticketId, mechanicId) {
     try {
-      const res = await fetch(
-        `${API_BASE_URL}/service_tickets/assign_mechanic/`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            service_ticket_id: ticketId,
-            mechanic_id: mechanicId,
-          }),
-        }
-      );
+      const res = await fetch(`${API_BASE_URL}/service_tickets/assign_mechanic/`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          service_ticket_id: ticketId,
+          mechanic_id: mechanicId,
+        }),
+      });
 
       if (res.ok) {
-        window.location.reload();
+        const updated = await fetch(`${API_BASE_URL}/service_tickets`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        const updatedTickets = await updated.json();
+        setTickets(updatedTickets);
       } else {
         alert("Failed to assign mechanic.");
       }
@@ -63,23 +82,25 @@ export default function AllTickets() {
   // Remove mechanic
   async function removeMechanic(ticketId, mechanicId) {
     try {
-      const res = await fetch(
-        `${API_BASE_URL}/service_tickets/remove_mechanic/`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            service_ticket_id: ticketId,
-            mechanic_id: mechanicId,
-          }),
-        }
-      );
+      const res = await fetch(`${API_BASE_URL}/service_tickets/remove_mechanic/`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          service_ticket_id: ticketId,
+          mechanic_id: mechanicId,
+        }),
+      });
 
       if (res.ok) {
-        window.location.reload();
+        const updated = await fetch(`${API_BASE_URL}/service_tickets`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        const updatedTickets = await updated.json();
+        setTickets(updatedTickets);
       } else {
         alert("Failed to remove mechanic.");
       }
@@ -96,7 +117,7 @@ export default function AllTickets() {
 
   // Status counts
   const total = tickets.length;
-  const pending = tickets.filter((t) => t.status === "Pending").length;
+  const open = tickets.filter((t) => t.status === "Open").length;
   const inProgress = tickets.filter((t) => t.status === "In Progress").length;
   const completed = tickets.filter((t) => t.status === "Completed").length;
   const unassigned = tickets.filter((t) => t.mechanics.length === 0).length;
@@ -107,74 +128,45 @@ export default function AllTickets() {
     if (filter === "Unassigned") return t.mechanics.length === 0;
     return t.status === filter;
   });
+  const sortedTickets = [...filteredTickets].sort((a, b) => a.id - b.id);
 
   return (
     <div className="ticket-details-page page-with-floating-button">
-      {/* PAGE TITLE */}
       <h2 className="page-title">All Service Tickets</h2>
 
-      {/* COUNTERS */}
       <div className="ticket-counts">
         <span>Total: {total}</span>
-        <span>Pending: {pending}</span>
+        <span>Open: {open}</span>
         <span>In Progress: {inProgress}</span>
         <span>Completed: {completed}</span>
         <span>Unassigned: {unassigned}</span>
       </div>
 
-      {/* FILTER BUTTONS */}
       <div className="ticket-filters">
-        <button
-          className={filter === "All" ? "active" : ""}
-          onClick={() => setFilter("All")}
-        >
-          All
-        </button>
-
-        <button
-          className={filter === "Pending" ? "active" : ""}
-          onClick={() => setFilter("Pending")}
-        >
-          Pending
-        </button>
-
-        <button
-          className={filter === "In Progress" ? "active" : ""}
-          onClick={() => setFilter("In Progress")}
-        >
-          In Progress
-        </button>
-
-        <button
-          className={filter === "Completed" ? "active" : ""}
-          onClick={() => setFilter("Completed")}
-        >
-          Completed
-        </button>
-
-        <button
-          className={filter === "Unassigned" ? "active" : ""}
-          onClick={() => setFilter("Unassigned")}
-        >
-          Unassigned
-        </button>
+        <button className={filter === "All" ? "active" : ""} onClick={() => setFilter("All")}>All</button>
+        <button className={filter === "Open" ? "active" : ""} onClick={() => setFilter("Open")}>Open</button>
+        <button className={filter === "In Progress" ? "active" : ""} onClick={() => setFilter("In Progress")}>In Progress</button>
+        <button className={filter === "Completed" ? "active" : ""} onClick={() => setFilter("Completed")}>Completed</button>
+        <button className={filter === "Unassigned" ? "active" : ""} onClick={() => setFilter("Unassigned")}>Unassigned</button>
       </div>
 
-      {/* TICKET GRID */}
       {filteredTickets.length === 0 ? (
         <p>No tickets match this filter.</p>
       ) : (
         <div className="ticket-grid">
-          {filteredTickets.map((t) => (
+          {sortedTickets.map((t) => (
             <TicketCard
               key={t.id}
               ticket={t}
-              onAssign={assignMechanic}
-              onRemove={removeMechanic}
+              assignMechanic={assignMechanic}
+              removeMechanic={removeMechanic}
+              mechanics={mechanics}
+              showAssignControls={true}
             />
           ))}
         </div>
       )}
+
       <BackToProfile />
     </div>
   );

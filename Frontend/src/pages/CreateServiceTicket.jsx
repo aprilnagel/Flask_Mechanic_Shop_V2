@@ -5,7 +5,7 @@ import { API_BASE_URL } from "../config";
 import BackToProfile from "../components/Back To Profile/BackToProfile";
 
 export default function CreateServiceTicket() {
-  const { token, mechanic } = useAuth();
+  const { token } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -31,8 +31,11 @@ export default function CreateServiceTicket() {
         const res = await fetch(`${API_BASE_URL}/customers`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        const data = await res.json();
-        setCustomers(data);
+
+        if (res.ok) {
+          const data = await res.json();
+          setCustomers(data);
+        }
       } catch (err) {
         console.error("Error fetching customers:", err);
       }
@@ -65,12 +68,20 @@ export default function CreateServiceTicket() {
 
       if (!res.ok) {
         setError("Failed to create ticket. Please check your inputs.");
-        console.log("Form Data:", formData);
         return;
       }
 
       await res.json();
       setSuccess("Service ticket created!");
+
+      // Reset form but keep prefilled ID if coming from NewCustomer
+      setFormData({
+        vehicle_make: "",
+        vehicle_model: "",
+        vehicle_year: "",
+        service_description: "",
+        customer_id: prefilledCustomerId,
+      });
     } catch (err) {
       setError("Server error. Try again later.");
     }
@@ -125,11 +136,14 @@ export default function CreateServiceTicket() {
           disabled={!!prefilledCustomerId}
         >
           <option value="">Select a customer</option>
-          {customers.map((c) => (
-            <option key={c.id} value={c.id}>
-              {c.first_name} {c.last_name} (ID: {c.id})
-            </option>
-          ))}
+
+          {[...customers]
+            .sort((a, b) => a.id - b.id)
+            .map((c) => (
+              <option key={c.id} value={c.id}>
+                ID #{c.id}: {c.first_name} {c.last_name}
+              </option>
+            ))}
         </select>
 
         <button type="submit">Create Ticket</button>
