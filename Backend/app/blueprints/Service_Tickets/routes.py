@@ -13,7 +13,7 @@ from app.extensions import limiter, cache
 @mechanic_required
 def create_service_ticket():
     try:
-        service_ticket_data = service_ticket_schema.load(request.json)  # returns dict now
+        service_ticket_data = service_ticket_schema.load(request.json)  # returns dictionary 
     except ValidationError as e:
         return jsonify({"message": e.messages}), 400
 
@@ -37,7 +37,7 @@ def get_service_tickets():
 
 #____________________________READ A SINGLE SERVICE TICKET ROUTE____________________________#
 
-#read a single service ticket but customers can only see their own tickets
+#REads a single service ticket by querying by id. Customers only see their own tickets, mechanics see all tickets.
 @service_tickets_bp.route('/<int:service_ticket_id>', methods=['GET'])
 @token_required
 def get_service_ticket(service_ticket_id):
@@ -47,7 +47,7 @@ def get_service_ticket(service_ticket_id):
     
     if request.logged_in_role == 'mechanic':
         pass  # Mechanics can access all tickets
-    #If the logged in user is a customer, ensure they can only access their own tickets
+    #If the logged in user is a customer, they can only access their own tickets
     if request.logged_in_role == 'customer':
         if service_ticket.customer_id != int(request.logged_in_user_id):
             return jsonify({"message": "Access denied: You can only view your own service tickets."}), 403
@@ -84,7 +84,7 @@ def update_service_ticket():
     for key, value in request.json.items():
         if key != 'service_ticket_id' and hasattr(service_ticket, key):
             setattr(service_ticket, key, value)
-    #If status is being updated to "Complete", set the completion_date to today
+    #If status is changed to "Complete", set completion_date to today's date
     if 'status' in request.json and request.json['status'] == "Complete":
         from datetime import date
         service_ticket.completion_date = date.today()
@@ -179,7 +179,7 @@ def remove_mechanic_from_service_ticket():
 
 #_________________ADD PART TO SERVICE TICKET______________________
 
-#we will need to query the service ticket to see of the part already exists. If it does, we will just update the quantity and price. We will not create a duplicate entry in the service ticket parts association table. Then we will subtract the part quantity from the parts stock in the parts table and update the service ticket price accordingly.
+#Overall idea: we will need to query the service ticket to see of the part already exists. If it does, we will just update the quantity and price. We will not create a duplicate entry in the service ticket parts association table. Then we will subtract the part quantity from the parts stock in the parts table and update the service ticket price accordingly.
 
 @service_tickets_bp.route('/add_part', methods=['PUT'])
 @token_required

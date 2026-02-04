@@ -36,7 +36,7 @@ def get_parts():
 
 #__________________GET PART BY ID______________________
 
-#put part_id in the request body to get specific part. Return the part details.
+#provide part ID. Return the part details.
 @parts_bp.route('/<int:part_id>', methods=['GET'])
 @token_required
 @mechanic_required
@@ -70,7 +70,7 @@ def update_part(part_id):
     return part_schema.jsonify(part), 200
 
 #__________________DELETE PART______________________
-#delete part by part_id given in the request body. return a message saying the part was deleted.
+#Provide part ID. Return a message saying the part was deleted.
 @parts_bp.route('', methods=['DELETE'])
 @token_required
 @mechanic_required
@@ -92,7 +92,7 @@ def delete_part():
     return jsonify({"message": f"Part {part_id} deleted successfully"}), 200
 
 #_________________ADD STOCK TO PART______________________
-#take current part stock and add additional stock to it. return a message saying how much stock was added and the new total stock.
+#Current stock + additional stock. Return a message saying how much stock was added and the new total stock.
 @parts_bp.route('/add_stock', methods=['PUT'])
 @token_required
 @mechanic_required

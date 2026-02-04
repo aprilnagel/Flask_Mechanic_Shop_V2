@@ -35,7 +35,7 @@ mechanic_update_schema = MechanicUpdateSchema()
 
 
 # -----------------------------
-# 3. Dump Schema (never returns password)
+# 3. Dump Schema (never returns password) for some reason, I needed to redefine this schema here for testing and frontend purposes
 # -----------------------------
 class MechanicDumpSchema(ma.SQLAlchemyAutoSchema):
     name = fields.Method("get_full_name", dump_only=True)
@@ -47,7 +47,7 @@ class MechanicDumpSchema(ma.SQLAlchemyAutoSchema):
         model = Mechanics
         load_instance = False
         include_fk = True
-        exclude = ()   # allow password to be returned
+        exclude = () 
 
 
 mechanic_schema = MechanicDumpSchema()

@@ -29,7 +29,7 @@ ul {
 
 /* BUTTONS */
 button {
-  background: #4f46e5; /* indigo */
+  background: #4f46e5; 
   color: white;
   border: none;
   padding: 8px 14px;
@@ -57,7 +57,7 @@ input {
 
 /* DANGER BUTTONS */
 button.danger {
-  background: #dc2672; /* red-600 */
+  background: #dc2672; 
 }
 button.danger:hover {
   opacity: 0.6;
@@ -81,25 +81,25 @@ button.danger:hover {
 .login-actions {
   display: flex;
   flex-direction: column;
-  gap: 12px;          /* spacing between buttons */
-  margin-top: 20px;   /* spacing above the group */
-  align-items: center; /* center the buttons */
+  gap: 12px;          
+  margin-top: 20px;   
+  align-items: center; 
 }
 
 .login-actions button {
-  width: 200px;        /* optional: consistent width */
+  width: 200px;        
 }
 
 .login-form {
   display: flex;
   flex-direction: column;
-  align-items: center;   /* centers the inputs */
-  gap: 12px;             /* spacing between inputs */
+  align-items: center;   
+  gap: 12px;             
   margin-top: 20px;
 }
 
 .login-form input {
-  width: 220px;          /* consistent width */
+  width: 220px;          
   padding: 10px;
   border-radius: 6px;
   border: 1px solid #ccc;
@@ -122,13 +122,13 @@ button.danger:hover {
   align-items: center;
   gap: 12px;
 
-  width: 220px;   /* THIS is the missing piece */
-  margin: 0 auto; /* centers the form itself */
+  width: 220px;  
+  margin: 0 auto; 
 }
 
 
 .register-form input {
-  width: 100%;             /* matches the form width */
+  width: 100%;             
   padding: 10px;
   border-radius: 6px;
   border: 1px solid #ccc;
@@ -169,11 +169,10 @@ button.danger:hover {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 32px;              /* more breathing room between buttons */
+  gap: 32px;              
   margin: 10px auto 25px auto;
-  padding: 0 20px;        /* widens the visual footprint */
-  max-width: 700px;       /* matches the visual width of the counters */
-  text-align: center;
+  padding: 0 20px;        
+  max-width: 700px;       
 }
 
 
@@ -199,7 +198,7 @@ button.danger:hover {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  width: 260px;        /* consistent with login/register */
+  width: 260px;        
   margin: 0 auto;
 }
 
@@ -250,7 +249,7 @@ button.danger:hover {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  width: 260px; /* matches your update form */
+  width: 260px; 
 }
 
 .create-ticket-form select {

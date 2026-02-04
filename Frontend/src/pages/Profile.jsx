@@ -40,9 +40,11 @@ export default function Profile() {
     );
   }
 
-  const activeTickets = myTickets.filter(
-    (t) => t.status === "Pending" || t.status === "In Progress"
-  ).length;
+  //Multiple statues are present because of backend code. Old tickets may have "Pending" status but new ones use "Open".
+  const activeTickets = myTickets.filter((t) => {
+    const s = t.status?.toLowerCase();
+    return s === "open" || s === "pending" || s === "in progress";
+  }).length;
 
   async function handleDeleteAccount() {
     setShowDeleteModal(false);
